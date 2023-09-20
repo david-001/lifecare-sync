@@ -30,8 +30,9 @@ export default class UsersController {
     }
 
     // Create new user
+    let createResp;
     try {
-      const createResp = await authn.user.create(
+      createResp = await authn.user.create(
         email,
         password,
         AuthN.IDProvider.PASSWORD,
@@ -44,23 +45,23 @@ export default class UsersController {
         }
       );
       // console.log("Create user success. Result: ", createResp.result);
-
-      // Create user in database
-      try {
-        const createdUser = new User({
-          userId: createResp.result.id,
-          email: createResp.result.email,
-        });
-        await createdUser.save();
-      } catch (err) {
-        return next(err);
-      }
-      res.status(201).json({
-        createResp: createResp.result,
-      });
     } catch (err) {
       return next(err);
     }
+
+    // Create user in database
+    try {
+      const createdUser = new User({
+        userId: createResp.result.id,
+        email: createResp.result.email,
+      });
+      await createdUser.save();
+    } catch (err) {
+      return next(err);
+    }
+    res.status(201).json({
+      createResp: createResp.result,
+    });
   };
 
   // Login
@@ -69,6 +70,7 @@ export default class UsersController {
     try {
       const loginResp = await authn.user.login.password(email, password);
       // console.log("Login success. Result: ", loginResp.result.active_token);
+
       res.status(201).json({ result: loginResp.result.active_token });
     } catch (err) {
       return next(err);
@@ -91,59 +93,15 @@ export default class UsersController {
     }
   };
 
-  // Update profile
-  updateProf = async (req, res, next) => {
-    const { email, first_name, last_name, phone, patients } = req.body;
+  // Get profile
+  getProfile = async (req, res, next) => {
+    const userId = req.params.userId;
     try {
-      const updateResp = await authn.user.profile.update({
-        email: email,
-        profile: {
-          first_name: first_name,
-          last_name: last_name,
-          phone: phone,
-        },
-      });
-      console.log(
-        "Update profile success. Current profile: ",
-        updateResp.result.profile
-      );
-      res.status(201).json({ result: updateResp.result.profile });
+      const resp = await authn.user.profile.getProfile({ id: userId });
+      // console.log("Get profile success. Profile: ", resp.result.profile);
+      res.status(201).json({ result: resp.result.profile });
     } catch (err) {
       return next(err);
     }
   };
-
-  // getProfByEmail = async (email) => {
-  //   let getResp = null;
-  //   try {
-  //     getResp = await authn.user.profile.getProfile({ email: email });
-  //     return getResp.result.profile;
-  //   } catch (err) {
-  //     return next(err);
-  //   }
-  // };
-
-  // listUsers = async (req, res, next) => {
-  //   // const { email, profile } = req.body;
-  //   try {
-  //     console.log("\n\nList users...");
-  //     const listResp2 = await authn.user.list({});
-  //     console.log(`List users success. ${listResp2.result.users.length} `);
-  //     res.status(201).json({ result: listResp2.result.users });
-  //   } catch (err) {
-  //     return next(err);
-  //   }
-  // };
-
-  // deleteUser = async (req, res, next) => {
-  //   const { email } = req.body;
-  //   try {
-  //     console.log("\n\nDelete user...");
-  //     const deleteResp = await authn.user.delete({ email: email });
-  //     console.log("Delete user success.");
-  //     res.status(201).json({ result: deleteResp });
-  //   } catch (err) {
-  //     return next(err);
-  //   }
-  // };
 }

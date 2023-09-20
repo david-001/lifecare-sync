@@ -26,11 +26,11 @@ const Login = () => {
       .post(LOGIN_URL, { ...inputValue })
       .then((resp) => {
         auth.login(
-          resp.data.result.id,
+          resp.data.result.identity,
           resp.data.result.token,
           resp.data.expire
         );
-        navigate("/patients");
+        navigate("/");
       })
       .catch((err) => {
         if (err.response.data.message) {

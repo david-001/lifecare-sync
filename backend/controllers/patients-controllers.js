@@ -15,9 +15,53 @@ const audit = new AuditService(token, config);
 export default class PatientsController {
   constructor() {}
 
+  // Get a specific patient
+  getPatient = async (req, res, next) => {
+    const userId = req.params.userId;
+    const patientId = req.params.pid;
+
+    let user;
+    try {
+      user = await User.findOne({ userId: userId });
+    } catch (err) {
+      return next(err);
+    }
+
+    let patient;
+    try {
+      patient = await Patient.findById(patientId);
+    } catch (err) {
+      const error = new HttpError(
+        "Something went wrong, could not find patient.",
+        500
+      );
+      return next(error);
+    }
+
+    // Audit
+    try {
+      await audit.log(
+        {
+          actor: user.email,
+          action: "Accessed Patient Records",
+          status: "Success",
+          target: `${hostIpAddress(req)}`,
+          source: `${clientIpAddress(req)}`,
+          message: `${user.email} accessed ${patient.name} records`,
+        },
+        { verbose: true }
+      );
+    } catch (err) {
+      return next(err);
+    }
+
+    res.status(201).json({ patient: patient });
+  };
+
   // Get patients for specific user
   getPatientsByUserId = async (req, res, next) => {
     const userId = req.params.userId;
+    const patientId = req.params.pid;
 
     let user;
     try {
@@ -35,7 +79,7 @@ export default class PatientsController {
           status: "Success",
           target: `${hostIpAddress(req)}`,
           source: `${clientIpAddress(req)}`,
-          message: `'${user.email}' accessed patient records.`,
+          message: `${user.email} accessed ${user.patients.length} patient records`,
         },
         { verbose: true }
       );
@@ -44,13 +88,11 @@ export default class PatientsController {
     }
 
     res.status(201).json({
-      patients: user.patients.map((patient) =>
-        patient.toObject({ getters: true })
-      ),
+      patients: user.patients.map((patient) => patient.toObject()),
     });
   };
 
-  // Create a new patient
+  // Create a new patient method
   createPatient = async (req, res, next) => {
     const {
       name,
@@ -60,6 +102,7 @@ export default class PatientsController {
       pre_conditions,
       current_condition,
       treatment,
+      medicine,
     } = req.body;
 
     if (!name || !age) {
@@ -92,8 +135,8 @@ export default class PatientsController {
       pre_conditions,
       current_condition,
       treatment,
+      medicine,
       owner: user._id,
-      doctors: user._id,
     });
     try {
       const sess = await mongoose.startSession();
@@ -115,11 +158,11 @@ export default class PatientsController {
     try {
       await audit.log({
         actor: user.email,
-        action: "New Patient Created",
+        action: `New Patient ${name} Created`,
         status: "Success",
         target: `${hostIpAddress(req)}`,
         source: `${clientIpAddress(req)}`,
-        message: `'${user.email}' created new patient record.`,
+        message: `${user.email} created new patient record.`,
       });
     } catch (err) {
       return next(err);
@@ -128,7 +171,7 @@ export default class PatientsController {
     res.status(201).json({ patient: createdPatient });
   };
 
-  // Update a patient
+  // Update a patient method
   updatePatient = async (req, res, next) => {
     const {
       name,
@@ -138,6 +181,7 @@ export default class PatientsController {
       pre_conditions,
       current_condition,
       treatment,
+      medicine,
     } = req.body;
 
     if (!name || !age) {
@@ -156,16 +200,8 @@ export default class PatientsController {
       patient = await Patient.findById(patientId);
     } catch (err) {
       const error = new HttpError(
-        "Something went wrong, could not update place.",
+        "Something went wrong, could not update patient.",
         500
-      );
-      return next(error);
-    }
-
-    if (patient.owner.toString() !== userId) {
-      const error = new HttpError(
-        "You are not allowed to edit this place.",
-        401
       );
       return next(error);
     }
@@ -182,6 +218,14 @@ export default class PatientsController {
       return next(error);
     }
 
+    if (patient.owner.toString() !== user._id) {
+      const error = new HttpError(
+        "You are not allowed to edit this patient.",
+        401
+      );
+      return next(error);
+    }
+
     //Update patient
     patient.name = name;
     patient.age = age;
@@ -190,12 +234,13 @@ export default class PatientsController {
     patient.pre_conditions = pre_conditions;
     patient.current_condition = current_condition;
     patient.treatment = treatment;
+    patient.medicine = medicine;
 
     try {
       await patient.save();
     } catch (err) {
       const error = new HttpError(
-        "Something went wrong, could not update place.",
+        "Something went wrong, could not update patient.",
         500
       );
       return next(error);
@@ -205,14 +250,87 @@ export default class PatientsController {
     try {
       await audit.log({
         actor: user.email,
-        action: "Updated Patient record",
+        action: `Updated Patient record ${name}`,
         status: "Success",
         target: `${hostIpAddress(req)}`,
         source: `${clientIpAddress(req)}`,
-        message: `'${user.email}' updated new patient record.`,
+        message: `${user.email} updated patient record.`,
       });
     } catch (err) {
       return next(err);
     }
+  };
+
+  // Delete a patient method
+  deletePatient = async (req, res, next) => {
+    const patientId = req.params.pid;
+    const userId = req.params.userId;
+
+    let patient;
+    try {
+      patient = await Patient.findById(patientId).populate("owner");
+    } catch (err) {
+      const error = new HttpError(
+        "Something went wrong, could not delete patient.",
+        500
+      );
+      return next(error);
+    }
+
+    if (!patient) {
+      const error = new HttpError("Could not find patient for this id.", 404);
+      return next(error);
+    }
+
+    // Get user
+    let user;
+    try {
+      user = await User.findOne({ userId: userId });
+    } catch (err) {
+      const error = new HttpError(
+        "Creating patient failed, please try again.",
+        500
+      );
+      return next(error);
+    }
+
+    if (patient.owner !== user._id) {
+      const error = new HttpError(
+        "You are not allowed to delete this patient.",
+        401
+      );
+      return next(error);
+    }
+
+    try {
+      const sess = await mongoose.startSession();
+      sess.startTransaction();
+      await patient.remove({ session: sess });
+      patient.owner.patients.pull(patient);
+      await patient.owner.save({ session: sess });
+      await sess.commitTransaction();
+    } catch (err) {
+      const error = new HttpError(
+        "Something went wrong, could not delete patient.",
+        500
+      );
+      return next(error);
+    }
+
+    // Audit
+    try {
+      await audit.log({
+        actor: user.email,
+        action: `Deleted Patient record ${patient.name}`,
+        status: "Success",
+        target: `${hostIpAddress(req)}`,
+        source: `${clientIpAddress(req)}`,
+        message: `${user.email} deleted new patient record.`,
+      });
+    } catch (err) {
+      return next(err);
+    }
+
+    res.status(200).json({ message: "Deleted patient." });
   };
 }

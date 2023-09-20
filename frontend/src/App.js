@@ -1,10 +1,11 @@
 import { BrowserRouter, Route, Navigate, Routes } from "react-router-dom";
-import Home from "./Home";
+import Home from "./shared/components/Home";
 import Login from "./users/components/Login";
 import Register from "./users/components/Register";
-import Patients from "./patients/components/Patients";
 import Logout from "./users/components/Logout";
 import Header from "./shared/components/Header";
+import AddPatient from "./patients/components/AddPatient";
+import PatientDetail from "./patients/components/PatientDetail";
 import { AuthContext } from "./shared/context/auth-context";
 import { useAuth } from "./shared/hooks/auth-hook";
 import UpdatePassword from "./users/components/UpdatePassword";
@@ -16,9 +17,11 @@ const App = () => {
   if (token) {
     routes = (
       <Routes>
-        <Route path="/patients" element={<Patients />} />
+        <Route path="/patientdetail/:id" element={<PatientDetail />} />
+        <Route path="/addpatient" element={<AddPatient />} />
         <Route path="/updatepassword" element={<UpdatePassword />} />
         <Route path="/logout" element={<Logout />} />
+        <Route path="/" element={<Home />} />
       </Routes>
     );
   } else {

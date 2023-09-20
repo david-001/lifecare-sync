@@ -7,19 +7,29 @@ export default class PatientsRoutes {
     this.patientsController = new PatientsController();
     this.router = express.Router();
     this.router.get(
-      "/getpatients/:userId",
+      "/fetch/:userId/:pid",
+      checkAuth,
+      this.patientsController.getPatient
+    );
+    this.router.get(
+      "/fetchall/:userId",
       checkAuth,
       this.patientsController.getPatientsByUserId
     );
     this.router.post(
-      "/newpatient/:userId",
+      "/new/:userId",
       checkAuth,
       this.patientsController.createPatient
     );
     this.router.patch(
-      "/updatepatient/:userId/:pid",
+      "/update/:userId/:pid",
       checkAuth,
       this.patientsController.updatePatient
+    );
+    this.router.delete(
+      "/delete/:userId/:pid",
+      checkAuth,
+      this.patientsController.deletePatient
     );
   }
 }

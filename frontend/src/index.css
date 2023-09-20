@@ -20,6 +20,9 @@ background-attachment: fixed;
   background-color: #0062ffff;
 }
 
+.p-info{
+  font-weight: bold;
+}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

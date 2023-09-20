@@ -25,11 +25,19 @@ const UpdatePassword = () => {
     e.preventDefault();
 
     axios
-      .patch(UPDATEPASSWORD_URL, { ...inputValue })
+      .patch(
+        UPDATEPASSWORD_URL,
+        { ...inputValue },
+        {
+          headers: {
+            Authorization: "Bearer " + auth.token,
+          },
+        }
+      )
       .then(() => {
         handleSuccess("Successfully updated password!");
         setTimeout(() => {
-          navigate("/patients");
+          navigate("/");
         }, 1000);
       })
       .catch((err) => {

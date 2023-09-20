@@ -16,8 +16,8 @@ const Header = () => {
     options = (
       <>
         <Nav.Item className="m-2">
-          <Link to="patients" style={linkStyle}>
-            Patient Intake
+          <Link to="addpatient" style={linkStyle}>
+            Add Patient
           </Link>
         </Nav.Item>
         <Nav.Item className="m-2">
