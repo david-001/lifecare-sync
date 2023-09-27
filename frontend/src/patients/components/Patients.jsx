@@ -7,6 +7,7 @@ import LoadingScreen from "../../shared/components/LoadingScreen";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
 import SERVER_URL from "../../Constants";
+import profile_photo from "../../imgs/profile_photo.jpeg";
 
 const cardContainerStyle = {
   display: "flex",
@@ -63,13 +64,17 @@ const Patients = () => {
         key={patient._id}
       >
         <Card.Header>{patient.name}</Card.Header>
-        {/* <Link to={`/patients/${patient._id}`}>
+        <Link to={`/patients/${patient._id}`}>
           <Image
             fluid={true}
-            src={profilePicture}
-            alt="placeholder image for patient photo"
+            src={
+              patient.image
+                ? `http://localhost:8000/${patient.image}`
+                : `${profile_photo}`
+            }
+            alt="Patient photo"
           />
-        </Link> */}
+        </Link>
         <Card.Body>
           <Card.Text>
             <Link

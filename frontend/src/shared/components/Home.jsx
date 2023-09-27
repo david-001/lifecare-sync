@@ -4,7 +4,6 @@ import { AuthContext } from "../../shared/context/auth-context";
 
 const Home = () => {
   const auth = useContext(AuthContext);
-  console.log(auth.userId);
 
   return (
     <div className="homeContainerMiddleBody">

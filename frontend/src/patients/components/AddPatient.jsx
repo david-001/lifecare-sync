@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Container } from "react-bootstrap";
@@ -15,6 +15,7 @@ const AddPatient = () => {
   const [inputValue, setInputValue] = useState({
     name: "",
     age: "",
+    image: null,
     blood_type: "",
     emergency_contact: "",
     pre_conditions: "",
@@ -23,6 +24,29 @@ const AddPatient = () => {
     medicine: "",
     comments: "",
   });
+
+  // const [image1, setImage1] = useState();
+
+  // useEffect(() => {
+  //   setInputValue({
+  //     ...inputValue,
+  //     image: image1,
+  //   });
+  // }, [image1]);
+
+  // useEffect(() => {
+  //   console.log("image changed", image1);
+  //   if (image1) {
+  //     const fileReader = new FileReader();
+  //     fileReader.onload = () => {
+  //       setPreview(fileReader.result);
+  //     };
+  //     //reader.readAsArrayBuffer <-  arraybuffer
+  //     fileReader.readAsDataURL(image1); //represented as a base64string
+  //   } else {
+  //     setPreview(null);
+  //   }
+  // }, [image1]);
 
   const {
     name,
@@ -38,6 +62,7 @@ const AddPatient = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(inputValue);
     axios
       .post(
         SERVER_URL + `api/patients/new/${auth.userId}`,
@@ -45,11 +70,12 @@ const AddPatient = () => {
         {
           headers: {
             Authorization: "Bearer " + auth.token,
+            "Content-Type": "multipart/form-data",
           },
         }
       )
       .then(() => {
-        handleSuccess("Successfully updated password!");
+        // handleSuccess("Successfully added patient!");
         navigate("/");
       })
       .catch((err) => {
@@ -75,6 +101,18 @@ const AddPatient = () => {
       position: toast.POSITION.TOP_RIGHT,
     });
 
+  const handlePhotoUpload = (e) => {
+    let pickedFile;
+    if (e.target.files && e.target.files.length === 1) {
+      pickedFile = e.target.files[0];
+      // setImage1(pickedFile);
+      setInputValue({
+        ...inputValue,
+        image: pickedFile,
+      });
+    }
+  };
+
   return (
     <Container className="justify-content-center">
       <h1>Add New Patient</h1>
@@ -97,6 +135,13 @@ const AddPatient = () => {
             type="number"
             placeholder="Enter age"
             onChange={handleOnChange}
+          />
+          <Form.Label htmlFor="photo">Profile Photo</Form.Label>
+          <Form.Control
+            name="photo"
+            type="file"
+            accept=".jpg,.png,.jpeg"
+            onChange={handlePhotoUpload}
           />
           <Form.Label htmlFor="blood_type">Blood Type</Form.Label>
           <Form.Select

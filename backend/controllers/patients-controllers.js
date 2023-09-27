@@ -9,6 +9,7 @@ import {
   hostIpAddress,
 } from "../lib/pangea.js";
 import { AuditService } from "pangea-node-sdk";
+import fs from "fs";
 
 const audit = new AuditService(token, config);
 
@@ -105,6 +106,9 @@ export default class PatientsController {
       medicine,
     } = req.body;
 
+    let image;
+    req.file ? (image = req.file.path) : (image = null);
+
     if (!name || !age) {
       return next(
         new HttpError(
@@ -130,6 +134,7 @@ export default class PatientsController {
     const createdPatient = new Patient({
       name,
       age,
+      image,
       blood_type,
       emergency_contact,
       pre_conditions,
@@ -316,6 +321,10 @@ export default class PatientsController {
       );
       return next(error);
     }
+
+    fs.unlink(imagePath, (err) => {
+      console.log(err);
+    });
 
     // Audit
     try {

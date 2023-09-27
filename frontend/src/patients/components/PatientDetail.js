@@ -7,10 +7,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SERVER_URL from "../../Constants";
+import profile_photo from "../../imgs/profile_photo.jpeg";
 
 const PatientDetail = () => {
   const auth = useContext(AuthContext);
   const [patient, setPatient] = useState(null);
+  const [editModalShow, setEditModalShow] = useState(false);
+  const [deleteModalShow, setDeleteModalShow] = useState(false);
+  const [treatmentModalShow, setTreatmentModalShow] = useState(false);
   const [user, setUser] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -66,7 +70,22 @@ const PatientDetail = () => {
           >
             <Card style={{ margin: 5 }}>
               <div>
-                {/* <img className='image' style={{maxWidth: '45%',margin: "5"}} src={imgProfile} alt="the patient's face"/> */}
+                <img
+                  className="image"
+                  style={{
+                    width: "45%",
+                    margin: "5",
+                    height: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  src={
+                    patient.image
+                      ? `http://localhost:8000/${patient.image}`
+                      : `${profile_photo}`
+                  }
+                  alt="Patient face"
+                />
               </div>
 
               <Card.Header>

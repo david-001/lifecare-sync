@@ -35,7 +35,10 @@ const Register = () => {
     axios
       .post(REGISTER_URL, { ...inputValue })
       .then(() => {
-        navigate("/login");
+        handleSuccess("Successfully created account.");
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       })
       .catch((err) => {
         if (err.response.data.message) {

@@ -1,8 +1,12 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/auth-context";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import SERVER_URL from "../../Constants";
+import axios from "axios";
 
 const linkStyle = {
   color: "white",
@@ -11,6 +15,40 @@ const linkStyle = {
 
 const Header = () => {
   const auth = useContext(AuthContext);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (auth.userId) {
+      axios
+        .get(SERVER_URL + `api/users/profile/${auth.userId}`, {
+          headers: {
+            Authorization: "Bearer " + auth.token,
+          },
+        })
+        .then((resp) => {
+          const first_name = resp.data.result.first_name;
+          const last_name = resp.data.result.last_name;
+          setUser(
+            <>
+              <span className="navbar-text mr-2">
+                Welcome, {first_name} {last_name}
+              </span>
+            </>
+          );
+        })
+        .catch((err) => {
+          handleError(err);
+        });
+    } else {
+      setUser(null);
+    }
+  }, [auth.token, auth.userId]);
+
+  const handleError = (err) =>
+    toast.error(err, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+
   let options;
   if (auth.token) {
     options = (
@@ -59,11 +97,11 @@ const Header = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto">
-          {/* {auth.token && <span className="navbar-text mr-2">Welcome</span>}
-          {auth.token ? authenticatedOptions : unauthenticatedOptions} */}
+          {user}
           {options}
         </Nav>
       </Navbar.Collapse>
+      <ToastContainer />
     </Navbar>
   );
 };
