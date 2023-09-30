@@ -8,6 +8,7 @@ export default class UsersRoutes {
     this.router = express.Router();
     this.router.post("/register", this.usersController.register);
     this.router.post("/login", this.usersController.login);
+    this.router.post("/logout", this.usersController.logout);
     this.router.patch(
       "/updatepassword",
       checkAuth,

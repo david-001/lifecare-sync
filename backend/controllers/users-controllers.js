@@ -1,10 +1,14 @@
-import { AuthNService, AuthN } from "pangea-node-sdk";
-import { token, config } from "../lib/pangea.js";
-
+import {
+  pangeaRegister,
+  pangeaLogin,
+  pangeaUpdatePassword,
+  pangeaGetProfile,
+} from "../lib/pangea.js";
 import { HttpError } from "../lib/http-error.js";
-import { User } from "../models/user.js";
-
-const authn = new AuthNService(token, config);
+import createUserDb, {
+  getUserFromToken,
+  setToken,
+} from "../db/db-operations.js";
 
 export default class UsersController {
   constructor() {}
@@ -30,78 +34,56 @@ export default class UsersController {
     }
 
     // Create new user
-    let createResp;
-    try {
-      createResp = await authn.user.create(
-        email,
-        password,
-        AuthN.IDProvider.PASSWORD,
-        {
-          profile: {
-            first_name: first_name,
-            last_name: last_name,
-            phone: phone,
-          },
-        }
-      );
-      // console.log("Create user success. Result: ", createResp.result);
-    } catch (err) {
-      return next(err);
-    }
+    const createResp = await pangeaRegister(
+      first_name,
+      last_name,
+      phone,
+      email,
+      password,
+      next
+    );
 
     // Create user in database
-    try {
-      const createdUser = new User({
-        userId: createResp.result.id,
-        email: createResp.result.email,
-      });
-      await createdUser.save();
-    } catch (err) {
-      return next(err);
-    }
-    res.status(201).json({
-      createResp: createResp.result,
-    });
+    await createUserDb(createResp.result.id, createResp.result.email, next);
+
+    res.status(201).json({ createResp: createResp.result });
   };
 
   // Login
   login = async (req, res, next) => {
     const { email, password } = req.body;
-    try {
-      const loginResp = await authn.user.login.password(email, password);
-      // console.log("Login success. Result: ", loginResp.result.active_token);
+    const loginResp = await pangeaLogin(email, password, next);
+    const userId = loginResp.result.active_token.identity;
+    const token = loginResp.result.active_token.token;
+    await setToken(userId, token, next);
 
-      res.status(201).json({ result: loginResp.result.active_token });
-    } catch (err) {
-      return next(err);
-    }
+    res.status(201).json({ userId: userId, token: token });
+  };
+
+  // Logout
+  logout = async (req, res, next) => {
+    const user = getUserFromToken(req.token, next);
+    await setToken(user.userId, null, next);
+
+    res.status(201).json({ userId: user.userId, token: null });
   };
 
   // Update password
   updatePassword = async (req, res, next) => {
     const { token, password_initial, password_update } = req.body;
-    try {
-      const passUpdateResp = await authn.client.password.change(
-        token,
-        password_initial,
-        password_update
-      );
-      // console.log("Update user password success.", passUpdateResp);
-      res.status(201).json({ result: passUpdateResp.result });
-    } catch (err) {
-      return next(err);
-    }
+    const passUpdateResp = await pangeaUpdatePassword(
+      token,
+      password_initial,
+      password_update,
+      next
+    );
+    res.status(201).json({ result: passUpdateResp.result });
   };
 
   // Get profile
   getProfile = async (req, res, next) => {
     const userId = req.params.userId;
-    try {
-      const resp = await authn.user.profile.getProfile({ id: userId });
-      // console.log("Get profile success. Profile: ", resp.result.profile);
-      res.status(201).json({ result: resp.result.profile });
-    } catch (err) {
-      return next(err);
-    }
+    const resp = await pangeaGetProfile(userId, res, next);
+    res.status(201).json({ result: resp.result.profile });
   };
 }

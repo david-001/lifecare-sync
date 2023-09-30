@@ -1,92 +1,56 @@
-import mongoose from "mongoose";
 import { HttpError } from "../lib/http-error.js";
-import { User } from "../models/user.js";
-import { Patient } from "../models/patient.js";
 import {
-  token,
-  config,
-  clientIpAddress,
-  hostIpAddress,
-} from "../lib/pangea.js";
-import { AuditService } from "pangea-node-sdk";
+  getUserDb,
+  getPatientsByUserIdDb,
+  getPatientDb,
+  createPatientDb,
+  updatePatientDb,
+  deletePatientDb,
+  getUserFromToken,
+} from "../db/db-operations.js";
+import { pangeaAudit } from "../lib/pangea.js";
 import fs from "fs";
-
-const audit = new AuditService(token, config);
 
 export default class PatientsController {
   constructor() {}
 
   // Get a specific patient
   getPatient = async (req, res, next) => {
-    const userId = req.params.userId;
+    // const userId = req.params.userId;
     const patientId = req.params.pid;
 
-    let user;
-    try {
-      user = await User.findOne({ userId: userId });
-    } catch (err) {
-      return next(err);
-    }
-
-    let patient;
-    try {
-      patient = await Patient.findById(patientId);
-    } catch (err) {
-      const error = new HttpError(
-        "Something went wrong, could not find patient.",
-        500
-      );
-      return next(error);
-    }
+    // Db operations
+    // const user = await getUserDb(userId, next);
+    const patient = await getPatientDb(patientId, next);
 
     // Audit
-    try {
-      await audit.log(
-        {
-          actor: user.email,
-          action: "Accessed Patient Records",
-          status: "Success",
-          target: `${hostIpAddress(req)}`,
-          source: `${clientIpAddress(req)}`,
-          message: `${user.email} accessed ${patient.name} records`,
-        },
-        { verbose: true }
-      );
-    } catch (err) {
-      return next(err);
-    }
+    await pangeaAudit(
+      user.email,
+      "Accessed Patient Records",
+      "Success",
+      `${user.email} accessed ${patient.name} records`,
+      req,
+      next
+    );
 
     res.status(201).json({ patient: patient });
   };
 
   // Get patients for specific user
   getPatientsByUserId = async (req, res, next) => {
-    const userId = req.params.userId;
-    const patientId = req.params.pid;
-
-    let user;
-    try {
-      user = await User.findOne({ userId: userId }).populate("patients");
-    } catch (err) {
-      return next(err);
-    }
+    // Db operation
+    const user = await getUserFromToken(req.token, next);
+    console.log(user);
 
     // Audit
-    try {
-      await audit.log(
-        {
-          actor: user.email,
-          action: "Accessed Patient Records",
-          status: "Success",
-          target: `${hostIpAddress(req)}`,
-          source: `${clientIpAddress(req)}`,
-          message: `${user.email} accessed ${user.patients.length} patient records`,
-        },
-        { verbose: true }
-      );
-    } catch (err) {
-      return next(err);
-    }
+    await pangeaAudit(
+      user.email,
+      "Accessed Patient Records",
+      "Success",
+      `${user.email} accessed ${user.patients.length} patient records`,
+      req,
+      next
+    );
 
     res.status(201).json({
       patients: user.patients.map((patient) => patient.toObject()),
@@ -106,6 +70,8 @@ export default class PatientsController {
       medicine,
     } = req.body;
 
+    // const userId = req.params.userId;
+
     let image;
     req.file ? (image = req.file.path) : (image = null);
 
@@ -118,20 +84,9 @@ export default class PatientsController {
       );
     }
 
-    // Get user
-    let user;
-    try {
-      user = await User.findOne({ userId: req.params.userId });
-    } catch (err) {
-      const error = new HttpError(
-        "Creating patient failed, please try again.",
-        500
-      );
-      return next(error);
-    }
-
-    // Create patient for user
-    const createdPatient = new Patient({
+    // Db operations
+    const user = await getUserFromToken(req.token, next);
+    const createdPatient = await createPatientDb(
       name,
       age,
       image,
@@ -141,37 +96,20 @@ export default class PatientsController {
       current_condition,
       treatment,
       medicine,
-      owner: user._id,
-    });
-    try {
-      const sess = await mongoose.startSession();
-      sess.startTransaction();
-      await createdPatient.save({ session: sess });
-      user.patients.push(createdPatient);
-      await user.save({ session: sess });
-      await sess.commitTransaction();
-    } catch (err) {
-      console.log(err);
-      const error = new HttpError(
-        "Creating patient failed, please try again.",
-        500
-      );
-      return next(error);
-    }
+      user,
+      next
+    );
+    console.log("createdPatient", createdPatient);
 
     // Audit
-    try {
-      await audit.log({
-        actor: user.email,
-        action: `New Patient ${name} Created`,
-        status: "Success",
-        target: `${hostIpAddress(req)}`,
-        source: `${clientIpAddress(req)}`,
-        message: `${user.email} created new patient record.`,
-      });
-    } catch (err) {
-      return next(err);
-    }
+    await pangeaAudit(
+      user.email,
+      `New Patient ${name} Created`,
+      "Success",
+      `${user.email} created new patient record.`,
+      req,
+      next
+    );
 
     res.status(201).json({ patient: createdPatient });
   };
@@ -198,30 +136,11 @@ export default class PatientsController {
       );
     }
 
-    const userId = req.params.userId;
     const patientId = req.params.pid;
-    let patient;
-    try {
-      patient = await Patient.findById(patientId);
-    } catch (err) {
-      const error = new HttpError(
-        "Something went wrong, could not update patient.",
-        500
-      );
-      return next(error);
-    }
 
-    // Get user
-    let user;
-    try {
-      user = await User.findOne({ userId: userId });
-    } catch (err) {
-      const error = new HttpError(
-        "Creating patient failed, please try again.",
-        500
-      );
-      return next(error);
-    }
+    // Db operations
+    const user = await getUserFromToken(req.token, next);
+    const patient = await getPatientDb(patientId, next);
 
     if (patient.owner.toString() !== user._id) {
       const error = new HttpError(
@@ -231,71 +150,41 @@ export default class PatientsController {
       return next(error);
     }
 
-    //Update patient
-    patient.name = name;
-    patient.age = age;
-    patient.blood_type = blood_type;
-    patient.emergency_contact = emergency_contact;
-    patient.pre_conditions = pre_conditions;
-    patient.current_condition = current_condition;
-    patient.treatment = treatment;
-    patient.medicine = medicine;
-
-    try {
-      await patient.save();
-    } catch (err) {
-      const error = new HttpError(
-        "Something went wrong, could not update patient.",
-        500
-      );
-      return next(error);
-    }
+    // Db operation
+    await updatePatientDb(
+      name,
+      age,
+      blood_type,
+      emergency_contact,
+      pre_conditions,
+      current_condition,
+      treatment,
+      medicine,
+      patient,
+      next
+    );
 
     // Audit
-    try {
-      await audit.log({
-        actor: user.email,
-        action: `Updated Patient record ${name}`,
-        status: "Success",
-        target: `${hostIpAddress(req)}`,
-        source: `${clientIpAddress(req)}`,
-        message: `${user.email} updated patient record.`,
-      });
-    } catch (err) {
-      return next(err);
-    }
+    await pangeaAudit(
+      user.email,
+      `Updated Patient record ${name}`,
+      "Success",
+      `${user.email} updated patient record.`,
+      req,
+      next
+    );
   };
 
   // Delete a patient method
   deletePatient = async (req, res, next) => {
     const patientId = req.params.pid;
-    const userId = req.params.userId;
 
-    let patient;
-    try {
-      patient = await Patient.findById(patientId).populate("owner");
-    } catch (err) {
-      const error = new HttpError(
-        "Something went wrong, could not delete patient.",
-        500
-      );
-      return next(error);
-    }
+    // Db operations
+    const patient = await getPatientDb(patientId, next);
+    const user = await getUserFromToken(req.token, next);
 
     if (!patient) {
       const error = new HttpError("Could not find patient for this id.", 404);
-      return next(error);
-    }
-
-    // Get user
-    let user;
-    try {
-      user = await User.findOne({ userId: userId });
-    } catch (err) {
-      const error = new HttpError(
-        "Creating patient failed, please try again.",
-        500
-      );
       return next(error);
     }
 
@@ -307,38 +196,22 @@ export default class PatientsController {
       return next(error);
     }
 
-    try {
-      const sess = await mongoose.startSession();
-      sess.startTransaction();
-      await patient.remove({ session: sess });
-      patient.owner.patients.pull(patient);
-      await patient.owner.save({ session: sess });
-      await sess.commitTransaction();
-    } catch (err) {
-      const error = new HttpError(
-        "Something went wrong, could not delete patient.",
-        500
-      );
-      return next(error);
-    }
+    // Db operation
+    await deletePatientDb(patient, next);
 
     fs.unlink(imagePath, (err) => {
       console.log(err);
     });
 
     // Audit
-    try {
-      await audit.log({
-        actor: user.email,
-        action: `Deleted Patient record ${patient.name}`,
-        status: "Success",
-        target: `${hostIpAddress(req)}`,
-        source: `${clientIpAddress(req)}`,
-        message: `${user.email} deleted new patient record.`,
-      });
-    } catch (err) {
-      return next(err);
-    }
+    await pangeaAudit(
+      user.email,
+      `Deleted Patient record ${patient.name}`,
+      "Success",
+      `${user.email} deleted new patient record.`,
+      req,
+      next
+    );
 
     res.status(200).json({ message: "Deleted patient." });
   };

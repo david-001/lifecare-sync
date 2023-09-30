@@ -6,10 +6,10 @@ const checkAuth = (req, res, next) => {
   }
   try {
     const token = req.headers.authorization.split(" ")[1]; // Authorization: 'Bearer TOKEN'
-    // const token = req.body.token;
     if (!token) {
       throw new Error("Authentication failed!");
     }
+    req.token = token;
     next();
   } catch (err) {
     const error = new HttpError("Authentication failed!", 403);

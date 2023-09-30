@@ -16,6 +16,7 @@ const userSchema = new Schema({
       ref: "Patient",
     },
   ],
+  token: { type: String, default: null },
 });
 
 const User = mongoose.model("User", userSchema);
