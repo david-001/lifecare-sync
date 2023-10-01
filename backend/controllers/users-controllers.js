@@ -55,9 +55,11 @@ export default class UsersController {
     const loginResp = await pangeaLogin(email, password, next);
     const userId = loginResp.result.active_token.identity;
     const token = loginResp.result.active_token.token;
+    const expire = loginResp.result.active_token.expire;
+
     await setToken(userId, token, next);
 
-    res.status(201).json({ userId: userId, token: token });
+    res.status(201).json({ userId: userId, token: token, expire: expire });
   };
 
   // Logout

@@ -40,7 +40,7 @@ export default class PatientsController {
   getPatientsByUserId = async (req, res, next) => {
     // Db operation
     const user = await getUserFromToken(req.token, next);
-    console.log(user);
+    const user_patients = await getPatientsByUserIdDb(user.userId, next);
 
     // Audit
     await pangeaAudit(
@@ -53,7 +53,7 @@ export default class PatientsController {
     );
 
     res.status(201).json({
-      patients: user.patients.map((patient) => patient.toObject()),
+      patients: user_patients.patients.map((patient) => patient.toObject()),
     });
   };
 

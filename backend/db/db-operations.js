@@ -62,7 +62,6 @@ const getPatientsByUserIdDb = async (userId, next) => {
   try {
     return await User.findOne({ userId: userId }).populate("patients");
   } catch (err) {
-    console.log(err);
     return next(err);
   }
 };
@@ -101,7 +100,6 @@ const createPatientDb = async (
     await user.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
-    console.log(err);
     const error = new HttpError(
       "Creating patient failed, please try again.",
       500
