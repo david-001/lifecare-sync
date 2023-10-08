@@ -70,12 +70,13 @@ const createPatientDb = async (
   name,
   age,
   image,
-  blood_type,
+  contact,
   emergency_contact,
-  pre_conditions,
-  current_condition,
+  pre_existing_conditions,
+  diagnosis,
   treatment,
-  medicine,
+  medication,
+  comments,
   user,
   next
 ) => {
@@ -83,12 +84,13 @@ const createPatientDb = async (
     name,
     age,
     image,
-    blood_type,
+    contact,
     emergency_contact,
-    pre_conditions,
-    current_condition,
+    pre_existing_conditions,
+    diagnosis,
     treatment,
-    medicine,
+    medication,
+    comments,
     owner: user._id,
   });
 
@@ -112,29 +114,51 @@ const createPatientDb = async (
 const updatePatientDb = async (
   name,
   age,
-  blood_type,
+  image,
+  contact,
   emergency_contact,
-  pre_conditions,
-  current_condition,
+  pre_existing_conditions,
+  diagnosis,
   treatment,
-  medicine,
+  medication,
+  comments,
   patient,
   next
 ) => {
   patient.name = name;
   patient.age = age;
-  patient.blood_type = blood_type;
+  patient.image = image;
+  patient.contact = contact;
   patient.emergency_contact = emergency_contact;
-  patient.pre_conditions = pre_conditions;
-  patient.current_condition = current_condition;
+  patient.pre_existing_conditions = pre_existing_conditions;
+  patient.diagnosis = diagnosis;
   patient.treatment = treatment;
-  patient.medicine = medicine;
+  patient.medication = medication;
+  patient.comments = comments;
 
   try {
     await patient.save();
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not update patient.",
+      500
+    );
+    return next(error);
+  }
+};
+
+const updateDoctor = async (new_doctor, patient, next) => {
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    patient.owner = new_doctor;
+    await patient.save({ session: sess });
+    patient.owner.patients.pull(patient);
+    await patient.owner.save({ session: sess });
+    await sess.commitTransaction();
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could update doctor.",
       500
     );
     return next(error);

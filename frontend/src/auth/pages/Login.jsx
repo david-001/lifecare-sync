@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import Container from "../../shared/components/Container";
 import Input from "../../shared/components/Input";
 import Button from "../../shared/components/Button";
 import { ToastContainer } from "react-toastify";
@@ -47,7 +48,7 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-white p-10 shadow md:w-3/4 lg:w-1/2 mx-auto">
+    <Container>
       <h3>Login</h3>
       <form onSubmit={handleSubmit}>
         <Input
@@ -70,10 +71,12 @@ const Login = () => {
           value={password}
           onChange={handleOnChange}
         />
-        <Button variant="primary" label_txt="Login" type="submit" />
+        <Button variant="primary" type="submit">
+          Login
+        </Button>
       </form>
       <ToastContainer />
-    </div>
+    </Container>
   );
 };
 

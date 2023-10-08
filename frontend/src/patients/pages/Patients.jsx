@@ -44,8 +44,13 @@ const Patients = () => {
   }
 
   const patientCards = patients.map((patient) => (
-    <div className="columns-sm m-2" key={patient._id}>
-      <Card title={patient.name} imgsrc={profile_photo} />
+    // <div className="columns-sm m-2" key={patient._id}>
+    <div className="w-96 m-3" key={patient._id}>
+      <Card
+        title={patient.name}
+        imgsrc={patient.image ? SERVER_URL + patient.image : profile_photo}
+        imgalt={patient.name}
+      />
     </div>
   ));
 

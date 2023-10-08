@@ -62,15 +62,19 @@ export default class PatientsController {
     const {
       name,
       age,
-      blood_type,
+      contact,
       emergency_contact,
-      pre_conditions,
-      current_condition,
+      pre_existing_conditions,
+      diagnosis,
       treatment,
-      medicine,
+      medication,
+      comments,
     } = req.body;
 
     // const userId = req.params.userId;
+    if (!req) {
+      return next(new HttpError("Request Error", 422));
+    }
 
     let image;
     req.file ? (image = req.file.path) : (image = null);
@@ -86,20 +90,22 @@ export default class PatientsController {
 
     // Db operations
     const user = await getUserFromToken(req.token, next);
+
     const createdPatient = await createPatientDb(
       name,
       age,
       image,
-      blood_type,
+      contact,
       emergency_contact,
-      pre_conditions,
-      current_condition,
+      pre_existing_conditions,
+      diagnosis,
       treatment,
-      medicine,
+      medication,
+      comments,
       user,
       next
     );
-    console.log("createdPatient", createdPatient);
+    // console.log("createdPatient", createdPatient);
 
     // Audit
     await pangeaAudit(

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Container from "../../shared/components/Container";
 import Input from "../../shared/components/Input";
 import Button from "../../shared/components/Button";
 import { ToastContainer } from "react-toastify";
@@ -57,7 +58,7 @@ const Register = () => {
   };
 
   return (
-    <div className="bg-white p-10 shadow md:w-3/4 lg:w-1/2 mx-auto">
+    <Container>
       <h3>Registration</h3>
       <form onSubmit={handleSubmit}>
         <Input
@@ -120,10 +121,12 @@ const Register = () => {
           value={password_confirmation}
           onChange={handleOnChange}
         />
-        <Button variant="primary" label_txt="Register" type="submit" />
+        <Button variant="primary" type="submit">
+          Register
+        </Button>
       </form>
       <ToastContainer />
-    </div>
+    </Container>
   );
 };
 

@@ -14,40 +14,19 @@ const patientSchema = new Schema({
   image: {
     type: String,
   },
-  // blood type is a string limited to the possible blood types, and required
-  blood_type: {
-    type: String,
-    enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
-    default: "O+",
-    required: true,
-  },
-  // emergency contact is an optional string
-  emergency_contact: String,
-  // pre-existing conditions is an optional string
-  pre_conditions: String,
-  // current condition is an optional string, but the default is "stable"
-  current_condition: {
-    type: String,
-    enum: ["stable", "serious", "critical", "discharged"],
-    default: "stable",
-  },
-  // treatment is an optional string, but the default is "no treatment assigned"
-  treatment: {
-    type: String,
-    default: "No treatment assigned.",
-  },
-  // medicine is an optional string, but the default is "no medicine assigned"
-  medicine: {
-    type: String,
-    default: "No medicine is assigned.",
-  },
+  //
+  contact: { type: String },
+  emergency_contact: { type: String },
+  pre_existing_conditions: { type: String },
+  diagnosis: { type: String },
+  treatment: { type: String },
+  medication: { type: String },
+  comments: { type: String },
   // Doctor
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  // comments are an optional string
-  comments: String,
 });
 
 const Patient = mongoose.model("Patient", patientSchema);

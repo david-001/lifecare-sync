@@ -1,5 +1,5 @@
 const Button = (props) => {
-  const { variant, label_txt, type, onClick } = props;
+  const { variant, type, onClick, children } = props;
   let bgcolor = "bg-blue-600";
   switch (variant) {
     case "primary":
@@ -21,7 +21,7 @@ const Button = (props) => {
       type={type}
       onClick={onClick}
     >
-      {label_txt}
+      {children}
     </button>
   );
 };
