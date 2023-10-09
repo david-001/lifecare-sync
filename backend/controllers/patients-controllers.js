@@ -16,7 +16,7 @@ export default class PatientsController {
 
   // Get a specific patient
   getPatient = async (req, res, next) => {
-    // const userId = req.params.userId;
+    const user = getUserFromToken(req.token, next);
     const patientId = req.params.pid;
 
     // Db operations
@@ -79,10 +79,10 @@ export default class PatientsController {
     let image;
     req.file ? (image = req.file.path) : (image = null);
 
-    if (!name || !age) {
+    if (!name || !age || !contact || !emergency_contact) {
       return next(
         new HttpError(
-          "Please ensure that the Name and Age are filled out.",
+          "Please ensure that the Name, age, contact and emergency contact are filled out.",
           422
         )
       );

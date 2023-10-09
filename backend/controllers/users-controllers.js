@@ -64,7 +64,7 @@ export default class UsersController {
 
   // Logout
   logout = async (req, res, next) => {
-    const user = getUserFromToken(req.token, next);
+    const user = await getUserFromToken(req.token, next);
     await setToken(user.userId, null, next);
 
     res.status(201).json({ userId: user.userId, token: null });
@@ -84,8 +84,8 @@ export default class UsersController {
 
   // Get profile
   getProfile = async (req, res, next) => {
-    const userId = req.params.userId;
-    const resp = await pangeaGetProfile(userId, res, next);
+    const user = await getUserFromToken(req.token, next);
+    const resp = await pangeaGetProfile(user.userId, next);
     res.status(201).json({ result: resp.result.profile });
   };
 }

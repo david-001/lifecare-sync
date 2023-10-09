@@ -45,11 +45,12 @@ const Patients = () => {
 
   const patientCards = patients.map((patient) => (
     // <div className="columns-sm m-2" key={patient._id}>
-    <div className="w-96 m-3" key={patient._id}>
+    <div className="w-80 m-3" key={patient._id}>
       <Card
         title={patient.name}
         imgsrc={patient.image ? SERVER_URL + patient.image : profile_photo}
         imgalt={patient.name}
+        link={`/patientdetail/${patient._id}`}
       />
     </div>
   ));

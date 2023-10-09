@@ -14,10 +14,6 @@ export default class UsersRoutes {
       checkAuth,
       this.usersController.updatePassword
     );
-    this.router.get(
-      "/profile/:userId",
-      checkAuth,
-      this.usersController.getProfile
-    );
+    this.router.get("/profile", checkAuth, this.usersController.getProfile);
   }
 }

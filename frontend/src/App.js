@@ -8,6 +8,7 @@ import { AuthContext } from "./shared/context/auth-context";
 import { useAuth } from "./shared/hooks/auth-hook";
 import Patients from "./patients/pages/Patients";
 import AddPatient from "./patients/pages/AddPatient";
+import PatientDetail from "./patients/pages/PatientDetail";
 
 // import Home from "./shared/components/Home";
 // import Login from "./users/components/Login";
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/patients" element={<Patients />} />
         <Route path="/addpatient" element={<AddPatient />} />
+        <Route path="/patientdetail/:id" element={<PatientDetail />} />
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="logout" element={<Logout />} />

@@ -6,7 +6,7 @@ const Card = (props) => {
   return (
     <div className="w-full overflow-auto shadow-lg bg-blue-600">
       <div className="font-semibold text-center text-white py-2">{title}</div>
-      <img className="w-full h-96" src={imgsrc} alt={imgalt} />
+      <img className="w-full h-80" src={imgsrc} alt={imgalt} />
       <div className="text-center py-3">
         <Link style={{ color: "white" }} to={link}>
           View
