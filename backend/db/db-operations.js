@@ -25,16 +25,13 @@ const getUserFromToken = async (token, next) => {
 };
 
 const setToken = async (userId, token, next) => {
-  const user = await getUserDb(userId, next);
-  user.token = token;
+  let user;
   try {
+    user = await getUserDb(userId, next);
+    user.token = token;
     await user.save();
   } catch (err) {
-    const error = new HttpError(
-      "Something went wrong, could not set token",
-      500
-    );
-    return next(error);
+    return next(err);
   }
 };
 
@@ -48,7 +45,7 @@ const getUserDb = async (userId, next) => {
 
 const getPatientDb = async (patientId, next) => {
   try {
-    return await Patient.findById(patientId);
+    return await Patient.findById(patientId).populate("owner");
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not find patient.",
@@ -169,7 +166,7 @@ const deletePatientDb = async (patient, next) => {
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    await patient.remove({ session: sess });
+    await patient.deleteOne({ session: sess });
     patient.owner.patients.pull(patient);
     await patient.owner.save({ session: sess });
     await sess.commitTransaction();
@@ -178,7 +175,7 @@ const deletePatientDb = async (patient, next) => {
       "Something went wrong, could not delete patient.",
       500
     );
-    return next(error);
+    return next(err);
   }
 };
 

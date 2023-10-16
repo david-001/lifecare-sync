@@ -84,6 +84,18 @@ const pangeaGetProfile = async (userId, next) => {
   }
 };
 
+const pangeaUpdateProfile = async (email, profile) => {
+  try {
+    const resp = await authn.user.profile.update({
+      email: email,
+      profile: profile,
+    });
+    return resp;
+  } catch (err) {
+    return next(err);
+  }
+};
+
 const pangeaAudit = async (actor, action, status, message, req, next) => {
   try {
     await audit.log(
@@ -107,5 +119,6 @@ export {
   pangeaLogin,
   pangeaUpdatePassword,
   pangeaGetProfile,
+  pangeaUpdateProfile,
   pangeaAudit,
 };

@@ -16,22 +16,26 @@ export default class PatientsController {
 
   // Get a specific patient
   getPatient = async (req, res, next) => {
-    const user = getUserFromToken(req.token, next);
     const patientId = req.params.pid;
+    let patient;
+    let user;
 
-    // Db operations
-    // const user = await getUserDb(userId, next);
-    const patient = await getPatientDb(patientId, next);
+    try {
+      user = await getUserFromToken(req.token, next);
+      patient = await getPatientDb(patientId, next);
 
-    // Audit
-    await pangeaAudit(
-      user.email,
-      "Accessed Patient Records",
-      "Success",
-      `${user.email} accessed ${patient.name} records`,
-      req,
-      next
-    );
+      // Audit
+      await pangeaAudit(
+        user.email,
+        "Accessed Patient Records",
+        "Success",
+        `${user.email} accessed ${patient.name} records`,
+        req,
+        next
+      );
+    } catch (err) {
+      next(err);
+    }
 
     res.status(201).json({ patient: patient });
   };
@@ -39,18 +43,25 @@ export default class PatientsController {
   // Get patients for specific user
   getPatientsByUserId = async (req, res, next) => {
     // Db operation
-    const user = await getUserFromToken(req.token, next);
-    const user_patients = await getPatientsByUserIdDb(user.userId, next);
+    let user;
+    let user_patients;
 
-    // Audit
-    await pangeaAudit(
-      user.email,
-      "Accessed Patient Records",
-      "Success",
-      `${user.email} accessed ${user.patients.length} patient records`,
-      req,
-      next
-    );
+    try {
+      user = await getUserFromToken(req.token, next);
+      user_patients = await getPatientsByUserIdDb(user.userId, next);
+
+      // Audit
+      await pangeaAudit(
+        user.email,
+        "Accessed Patient Records",
+        "Success",
+        `${user.email} accessed ${user.patients.length} patient records`,
+        req,
+        next
+      );
+    } catch (err) {
+      next(err);
+    }
 
     res.status(201).json({
       patients: user_patients.patients.map((patient) => patient.toObject()),
@@ -89,35 +100,38 @@ export default class PatientsController {
     }
 
     // Db operations
-    const user = await getUserFromToken(req.token, next);
+    let user;
+    try {
+      user = await getUserFromToken(req.token, next);
+      await createPatientDb(
+        name,
+        age,
+        image,
+        contact,
+        emergency_contact,
+        pre_existing_conditions,
+        diagnosis,
+        treatment,
+        medication,
+        comments,
+        user,
+        next
+      );
 
-    const createdPatient = await createPatientDb(
-      name,
-      age,
-      image,
-      contact,
-      emergency_contact,
-      pre_existing_conditions,
-      diagnosis,
-      treatment,
-      medication,
-      comments,
-      user,
-      next
-    );
-    // console.log("createdPatient", createdPatient);
+      // Audit
+      await pangeaAudit(
+        user.email,
+        `New Patient ${name} Created`,
+        "Success",
+        `${user.email} created new patient record.`,
+        req,
+        next
+      );
+    } catch (err) {
+      next(err);
+    }
 
-    // Audit
-    await pangeaAudit(
-      user.email,
-      `New Patient ${name} Created`,
-      "Success",
-      `${user.email} created new patient record.`,
-      req,
-      next
-    );
-
-    res.status(201).json({ patient: createdPatient });
+    res.status(201).json({ response: "Successfully created patient." });
   };
 
   // Update a patient method
@@ -125,60 +139,79 @@ export default class PatientsController {
     const {
       name,
       age,
-      blood_type,
+      contact,
       emergency_contact,
-      pre_conditions,
-      current_condition,
+      pre_existing_conditions,
+      diagnosis,
       treatment,
-      medicine,
+      medication,
+      comments,
     } = req.body;
 
-    if (!name || !age) {
+    if (!name || !age || !contact || !emergency_contact) {
       return next(
         new HttpError(
-          "Please ensure that the Name and Age are filled out.",
+          "Please ensure that the Name, age, contact and emergency contact are filled out.",
           422
         )
       );
     }
 
     const patientId = req.params.pid;
+    let image;
+    req.file ? (image = req.file.path) : (image = null);
 
     // Db operations
-    const user = await getUserFromToken(req.token, next);
-    const patient = await getPatientDb(patientId, next);
+    let user;
+    let patient;
 
-    if (patient.owner.toString() !== user._id) {
-      const error = new HttpError(
-        "You are not allowed to edit this patient.",
-        401
+    try {
+      user = await getUserFromToken(req.token, next);
+      patient = await getPatientDb(patientId, next);
+
+      // Audit
+      await pangeaAudit(
+        user.email,
+        `Updated Patient record ${name}`,
+        "Success",
+        `${user.email} updated patient record.`,
+        req,
+        next
       );
-      return next(error);
+    } catch (err) {
+      next(err);
     }
 
-    // Db operation
-    await updatePatientDb(
-      name,
-      age,
-      blood_type,
-      emergency_contact,
-      pre_conditions,
-      current_condition,
-      treatment,
-      medicine,
-      patient,
-      next
-    );
+    // Delete old image
+    if (patient.image && image) {
+      fs.unlink(patient.image, (err) => {
+        console.log(err);
+      });
+    }
 
-    // Audit
-    await pangeaAudit(
-      user.email,
-      `Updated Patient record ${name}`,
-      "Success",
-      `${user.email} updated patient record.`,
-      req,
-      next
-    );
+    if (!image) {
+      image = patient.image;
+    }
+
+    try {
+      await updatePatientDb(
+        name,
+        age,
+        image,
+        contact,
+        emergency_contact,
+        pre_existing_conditions,
+        diagnosis,
+        treatment,
+        medication,
+        comments,
+        patient
+      );
+    } catch (err) {
+      next(err);
+    }
+
+    res.status(201).json({ response: "Successfully updated patient." });
   };
 
   // Delete a patient method
@@ -186,38 +219,37 @@ export default class PatientsController {
     const patientId = req.params.pid;
 
     // Db operations
-    const patient = await getPatientDb(patientId, next);
-    const user = await getUserFromToken(req.token, next);
+    let patient;
+    let user;
 
-    if (!patient) {
-      const error = new HttpError("Could not find patient for this id.", 404);
-      return next(error);
-    }
+    try {
+      patient = await getPatientDb(patientId, next);
+      user = await getUserFromToken(req.token, next);
+      await deletePatientDb(patient, next);
 
-    if (patient.owner !== user._id) {
-      const error = new HttpError(
-        "You are not allowed to delete this patient.",
-        401
+      // Audit
+      await pangeaAudit(
+        user.email,
+        `Deleted Patient record ${patient.name}`,
+        "Success",
+        `${user.email} deleted new patient record.`,
+        req,
+        next
       );
-      return next(error);
+    } catch (err) {
+      next(err);
     }
 
-    // Db operation
-    await deletePatientDb(patient, next);
+    // if (!patient) {
+    //   const error = new HttpError("Could not find patient for this id.", 404);
+    //   return next(error);
+    // }
 
-    fs.unlink(imagePath, (err) => {
-      console.log(err);
-    });
-
-    // Audit
-    await pangeaAudit(
-      user.email,
-      `Deleted Patient record ${patient.name}`,
-      "Success",
-      `${user.email} deleted new patient record.`,
-      req,
-      next
-    );
+    if (patient.image) {
+      fs.unlink(patient.image, (err) => {
+        console.log(err);
+      });
+    }
 
     res.status(200).json({ message: "Deleted patient." });
   };

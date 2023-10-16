@@ -15,5 +15,10 @@ export default class UsersRoutes {
       this.usersController.updatePassword
     );
     this.router.get("/profile", checkAuth, this.usersController.getProfile);
+    this.router.patch(
+      "/updateprofile",
+      checkAuth,
+      this.usersController.updateProfile
+    );
   }
 }

@@ -16,7 +16,11 @@ export default class PatientsRoutes {
       fileUpload.single("image"),
       this.patientsController.createPatient
     );
-    this.router.patch("/update/:pid", this.patientsController.updatePatient);
+    this.router.patch(
+      "/update/:pid",
+      fileUpload.single("image"),
+      this.patientsController.updatePatient
+    );
     this.router.delete("/delete/:pid", this.patientsController.deletePatient);
   }
 }
