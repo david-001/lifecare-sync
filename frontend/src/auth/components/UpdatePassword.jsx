@@ -1,107 +1,82 @@
-import React, { useState, useContext } from "react";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useState, useEffect, useContext } from "react";
+import Container from "../../shared/components/Container";
+import Input from "../../shared/components/Input";
+import Button from "../../shared/components/Button";
+import handleSuccess, { handleError } from "../../shared/components/toast";
 import SERVER_URL from "../../Constants";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
-const UPDATEPASSWORD_URL = SERVER_URL + "api/users/updatepassword";
+import { ToastContainer } from "react-toastify";
 
 const UpdatePassword = () => {
   const auth = useContext(AuthContext);
-  const navigate = useNavigate();
 
-  const [inputValue, setInputValue] = useState({
-    token: auth.token,
+  const [password, setPassword] = useState({
     password_initial: "",
-    new_password: "",
+    password_update: "",
   });
 
-  const { password_initial, password_update } = inputValue;
+  const { password_initial, password_update } = password;
 
-  const handleSubmit = async (e) => {
+  const handleSubmitPass = async (e) => {
     e.preventDefault();
-
     axios
       .patch(
-        UPDATEPASSWORD_URL,
-        { ...inputValue },
+        `${SERVER_URL}api/users/updatepassword`,
+        { ...password },
         {
           headers: {
             Authorization: "Bearer " + auth.token,
           },
         }
       )
-      .then(() => {
-        handleSuccess("Successfully updated password!");
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
+      .then((resp) => {
+        console.log(resp);
+        handleSuccess(resp.data.response);
       })
       .catch((err) => {
-        if (err.response.data.message) {
-          handleError(err.response.data.message);
-        } else {
-          handleError(err.response.data);
-        }
+        handleError(err);
       });
   };
 
-  const handleOnChange = (e) => {
+  const handleOnPassChange = (e) => {
     const { name, value } = e.target;
-    setInputValue({
-      ...inputValue,
+    setPassword({
+      ...password,
       [name]: value,
     });
   };
-
-  const handleSuccess = (msg) =>
-    toast.success(msg, {
-      position: toast.POSITION.TOP_RIGHT,
-    });
-
-  const handleError = (err) =>
-    toast.error(err, {
-      position: toast.POSITION.TOP_RIGHT,
-    });
-
   return (
-    <div className="row">
-      <div className="col-sm-10 col-md-8 mx-auto mt-5">
-        <h3>Update Password</h3>
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="oldPassword">
-            <Form.Label>Old password</Form.Label>
-            <Form.Control
-              required
-              name="password_initial"
-              value={password_initial}
-              type="password"
-              placeholder="Old Password"
-              onChange={handleOnChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="newPassword">
-            <Form.Label>New Password</Form.Label>
-            <Form.Control
-              required
-              name="password_update"
-              value={password_update}
-              type="password"
-              placeholder="New Password"
-              onChange={handleOnChange}
-            />
-          </Form.Group>
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
-        </Form>
-        <ToastContainer />
+    <Container>
+      <div className="prose">
+        <h2 className="pb-6">Update Password</h2>
       </div>
-    </div>
+      <form onSubmit={handleSubmitPass}>
+        <Input
+          label="password_initial"
+          label_txt="Initial Password"
+          type="password"
+          id="password_initial"
+          name="password_initial"
+          placeholder="Initial Password"
+          value={password_initial}
+          onChange={handleOnPassChange}
+        />
+        <Input
+          label="password_update"
+          label_txt="Updated Password"
+          type="password"
+          id="password_update"
+          name="password_update"
+          placeholder="Update Password"
+          value={password_update}
+          onChange={handleOnPassChange}
+        />
+        <Button variant="primary" type="submit">
+          Update Password
+        </Button>
+      </form>
+    </Container>
   );
 };
-
 export default UpdatePassword;

@@ -9,6 +9,7 @@ import { useAuth } from "./shared/hooks/auth-hook";
 import Patients from "./patients/pages/Patients";
 import AddPatient from "./patients/pages/AddPatient";
 import PatientDetail from "./patients/pages/PatientDetail";
+import Profile from "./auth/pages/Profile";
 
 // import Home from "./shared/components/Home";
 // import Login from "./users/components/Login";
@@ -20,7 +21,7 @@ import PatientDetail from "./patients/pages/PatientDetail";
 // import UpdatePassword from "./users/components/UpdatePassword";
 
 const App = () => {
-  const { token, login, logout, userId } = useAuth();
+  const { token, login, logout, userId, userName } = useAuth();
 
   let routes;
   if (token) {
@@ -30,10 +31,8 @@ const App = () => {
         <Route path="/patients" element={<Patients />} />
         <Route path="/addpatient" element={<AddPatient />} />
         <Route path="/patientdetail/:id" element={<PatientDetail />} />
-        <Route path="/" element={<Register />} />
-        <Route path="/login" element={<Login />} />
         <Route path="logout" element={<Logout />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     );
   } else {
@@ -53,6 +52,7 @@ const App = () => {
         isLoggedIn: !!token,
         token: token,
         userId: userId,
+        userName: userName,
         login: login,
         logout: logout,
       }}
@@ -60,7 +60,7 @@ const App = () => {
       <BrowserRouter>
         <Navbar />
         <main>
-          <div className="bg-gradient-to-b from-blue-500 to-blue-50 min-h-screen py-20 px-10">
+          <div className="bg-gradient-to-b from-blue-500 to-blue-50 flex justify-center min-h-screen py-20 px-10">
             {routes}
           </div>
         </main>

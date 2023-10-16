@@ -27,7 +27,13 @@ const Login = () => {
     axios
       .post(LOGIN_URL, { ...inputValue })
       .then((resp) => {
-        auth.login(resp.data.userId, resp.data.token, resp.data.expire);
+        auth.login(
+          resp.data.userId,
+          resp.data.userName,
+          resp.data.token,
+          resp.data.expire
+        );
+        // console.log(resp.data.expire);
         navigate("/patients");
       })
       .catch((err) => {
@@ -49,7 +55,10 @@ const Login = () => {
 
   return (
     <Container>
-      <h3>Login</h3>
+      <div className="prose">
+        <h2 className="pb-6">Login</h2>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <Input
           label="email"

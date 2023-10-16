@@ -38,7 +38,7 @@ const Register = () => {
         handleSuccess("Successfully created account.");
         setTimeout(() => {
           navigate("/login");
-        }, 2000);
+        }, 3000);
       })
       .catch((err) => {
         if (err.response.data.message) {
@@ -59,7 +59,10 @@ const Register = () => {
 
   return (
     <Container>
-      <h3>Registration</h3>
+      <div className="prose">
+        <h2 className="pb-6">Registration</h2>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <Input
           label="first_name"
@@ -121,6 +124,7 @@ const Register = () => {
           value={password_confirmation}
           onChange={handleOnChange}
         />
+        <br />
         <Button variant="primary" type="submit">
           Register
         </Button>

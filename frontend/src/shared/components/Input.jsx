@@ -47,8 +47,6 @@ const Input = (props) => {
       <input
         className="border border-gray-300 shadow w-full file:bg-blue-500 file:text-white file:font-bold file:py-2 file:px-4"
         type={type}
-        // id={id}
-        // name={name}
         onChange={onChange}
       />
     );

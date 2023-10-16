@@ -1,0 +1,111 @@
+import Input from "../../shared/components/Input";
+import Button from "../../shared/components/Button";
+
+const PatientForm = (props) => {
+  const { patient, handleSubmit, handleOnChange, handlePhotoUpload } = props;
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <Input
+        label="name"
+        label_txt="Name"
+        type="text"
+        id="name"
+        name="name"
+        placeholder="Enter name"
+        value={patient.name}
+        onChange={handleOnChange}
+      />
+      <Input
+        label="age"
+        label_txt="Age"
+        type="number"
+        id="age"
+        name="age"
+        placeholder="Enter age"
+        value={patient.age}
+        onChange={handleOnChange}
+      />
+      <Input
+        type="file"
+        label="image"
+        label_txt="Upload profile photo"
+        accept=".jpg,.png,.jpeg"
+        onChange={handlePhotoUpload}
+      />
+      <Input
+        label="contact"
+        label_txt="Contact Tel."
+        type="text"
+        id="contact"
+        name="contact"
+        placeholder="Enter telephone number"
+        value={patient.contact}
+        onChange={handleOnChange}
+      />
+      <Input
+        label="emergency_contact"
+        label_txt="Emergency Contact Tel."
+        type="text"
+        id="emergency_contact"
+        name="emergency_contact"
+        placeholder="Enter telephone number"
+        value={patient.emergency_contact}
+        onChange={handleOnChange}
+      />
+      <Input
+        label="pre_existing_conditions"
+        label_txt="Pre-existing Conditions"
+        type="textarea"
+        id="pre_existing_conditions"
+        name="pre_existing_conditions"
+        placeholder="Enter Pre-existing conditions"
+        value={patient.pre_existing_conditions}
+        onChange={handleOnChange}
+      />
+      <Input
+        label="diagnosis"
+        label_txt="Diagnosis"
+        type="textarea"
+        id="diagnosis"
+        name="diagnosis"
+        placeholder="Enter Diagnosis"
+        value={patient.diagnosis}
+        onChange={handleOnChange}
+      />
+      <Input
+        label="treatment"
+        label_txt="Treatment"
+        type="textarea"
+        id="treatment"
+        name="treatment"
+        placeholder="Enter Treatment"
+        value={patient.treatment}
+        onChange={handleOnChange}
+      />
+      <Input
+        label="medication"
+        label_txt="Medication"
+        type="textarea"
+        id="medication"
+        name="medication"
+        placeholder="Enter Medication"
+        value={patient.medication}
+        onChange={handleOnChange}
+      />
+      <Input
+        label="comments"
+        label_txt="Comments"
+        type="textarea"
+        id="comments"
+        name="comments"
+        placeholder="Enter Comments"
+        value={patient.comments}
+        onChange={handleOnChange}
+      />
+      <br />
+      <Button type="submit">Submit</Button>
+    </form>
+  );
+};
+export default PatientForm;

@@ -37,15 +37,16 @@ const Patients = () => {
   } else if (patients.length === 0 && auth.token) {
     return (
       <div className="bg-white p-10 shadow md:w-3/4 lg:w-1/2 mx-auto">
-        <h3>No Patients</h3>
+        <div className="prose">
+          <h2 className="pb-6">No Patients</h2>
+        </div>
         <p>You have no patients.</p>
       </div>
     );
   }
 
   const patientCards = patients.map((patient) => (
-    // <div className="columns-sm m-2" key={patient._id}>
-    <div className="w-80 m-3" key={patient._id}>
+    <div className="m-3" key={patient._id}>
       <Card
         title={patient.name}
         imgsrc={patient.image ? SERVER_URL + patient.image : profile_photo}
@@ -56,11 +57,7 @@ const Patients = () => {
   ));
 
   return (
-    <div className="container-md">
-      <div className="flex flex-row flex-wrap justify-center">
-        {patientCards}
-      </div>
-    </div>
+    <div className="w-3/4 flex flex-wrap justify-center">{patientCards}</div>
   );
 };
 
