@@ -8,13 +8,13 @@ import SERVER_URL from "../../Constants";
 import profile_photo from "../../imgs/profile_photo.jpeg";
 import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import Button from "../../shared/components/Button";
-import EditPatientModal from "../components/EditPatientModal";
+import UpdatePatientModal from "../components/UpdatePatientModal";
 import DeletePatientModal from "../components/DeletePatientModal";
 
 const PatientDetail = () => {
   const auth = useContext(AuthContext);
   const [patient, setPatient] = useState(null);
-  const [editPatientModal, setEditPatientModal] = useState(false);
+  const [updatePatientModal, setUpdatePatientModal] = useState(false);
   const [deletePatientModal, setDeletePatientModal] = useState(false);
   const [updated, setUpdated] = useState(false);
   const [userName, setUserName] = useState(null);
@@ -54,10 +54,10 @@ const PatientDetail = () => {
       <br />
       <div>
         <div className="flex flex-wrap">
-          <div className="pb-6 flex justify-center items-center lg:w-52">
+          <div className="pb-10 flex justify-center items-center lg:w-52">
             <img
               src={patient.image ? SERVER_URL + patient.image : profile_photo}
-              alt={patient.name}
+              alt={`${patient.first_name} ${patient.last_name}`}
             />
           </div>
 
@@ -65,8 +65,12 @@ const PatientDetail = () => {
             <table>
               <tbody>
                 <tr>
-                  <td className="font-bold">Name</td>
-                  <td className="py-2 pl-4">{patient.name}</td>
+                  <td className="font-bold">First Name</td>
+                  <td className="py-2 pl-4">{patient.first_name}</td>
+                </tr>
+                <tr>
+                  <td className="font-bold">Last Name</td>
+                  <td className="py-2 pl-4">{patient.last_name}</td>
                 </tr>
                 <tr>
                   <td className="font-bold">Age</td>
@@ -82,7 +86,7 @@ const PatientDetail = () => {
                 </tr>
                 <tr>
                   <td className="font-bold">Doctor</td>
-                  <td className="py-2 pl-4">{`${userName}`}</td>
+                  <td className="py-2 pl-4">{patient.owner.userId}</td>
                 </tr>
               </tbody>
             </table>
@@ -116,7 +120,7 @@ const PatientDetail = () => {
           <Button
             variant="warning"
             onClick={() => {
-              setEditPatientModal(true);
+              setUpdatePatientModal(true);
             }}
           >
             Update
@@ -133,9 +137,9 @@ const PatientDetail = () => {
       </div>
 
       <div>
-        <EditPatientModal
-          show={editPatientModal}
-          handleClose={() => setEditPatientModal(false)}
+        <UpdatePatientModal
+          show={updatePatientModal}
+          handleClose={() => setUpdatePatientModal(false)}
           patient={patient}
           triggerRefresh={() => setUpdated((prev) => !prev)}
         />

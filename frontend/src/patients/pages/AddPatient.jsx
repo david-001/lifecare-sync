@@ -12,7 +12,8 @@ const AddPatient = () => {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const [patient, setPatient] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     age: "",
     image: null,
     contact: "",
@@ -30,7 +31,7 @@ const AddPatient = () => {
     axios
       .post(
         SERVER_URL + `api/patients/new`,
-        { ...patient, role: "patient" },
+        { role: "patient", ...patient },
         {
           headers: {
             Authorization: "Bearer " + auth.token,

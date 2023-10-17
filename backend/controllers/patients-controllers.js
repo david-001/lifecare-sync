@@ -71,7 +71,8 @@ export default class PatientsController {
   // Create a new patient method
   createPatient = async (req, res, next) => {
     const {
-      name,
+      first_name,
+      last_name,
       age,
       contact,
       emergency_contact,
@@ -90,10 +91,10 @@ export default class PatientsController {
     let image;
     req.file ? (image = req.file.path) : (image = null);
 
-    if (!name || !age || !contact || !emergency_contact) {
+    if (!first_name || !last_name || !age) {
       return next(
         new HttpError(
-          "Please ensure that the Name, age, contact and emergency contact are filled out.",
+          "Please ensure that the First Name, Last Name and Age are filled out.",
           422
         )
       );
@@ -104,7 +105,8 @@ export default class PatientsController {
     try {
       user = await getUserFromToken(req.token, next);
       await createPatientDb(
-        name,
+        first_name,
+        last_name,
         age,
         image,
         contact,
@@ -121,7 +123,7 @@ export default class PatientsController {
       // Audit
       await pangeaAudit(
         user.email,
-        `New Patient ${name} Created`,
+        `New Patient ${first_name} ${last_name} Created`,
         "Success",
         `${user.email} created new patient record.`,
         req,
@@ -137,7 +139,8 @@ export default class PatientsController {
   // Update a patient method
   updatePatient = async (req, res, next) => {
     const {
-      name,
+      first_name,
+      last_name,
       age,
       contact,
       emergency_contact,
@@ -148,10 +151,10 @@ export default class PatientsController {
       comments,
     } = req.body;
 
-    if (!name || !age || !contact || !emergency_contact) {
+    if (!first_name || !last_name || !age) {
       return next(
         new HttpError(
-          "Please ensure that the Name, age, contact and emergency contact are filled out.",
+          "Please ensure that the First Name, Last Name and Age are filled out.",
           422
         )
       );
@@ -172,7 +175,7 @@ export default class PatientsController {
       // Audit
       await pangeaAudit(
         user.email,
-        `Updated Patient record ${name}`,
+        `Updated Patient record ${first_name} ${last_name}`,
         "Success",
         `${user.email} updated patient record.`,
         req,
@@ -195,7 +198,8 @@ export default class PatientsController {
 
     try {
       await updatePatientDb(
-        name,
+        first_name,
+        last_name,
         age,
         image,
         contact,

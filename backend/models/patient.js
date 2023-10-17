@@ -3,7 +3,11 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const patientSchema = new Schema({
-  name: {
+  first_name: {
+    type: String,
+    required: true,
+  },
+  last_name: {
     type: String,
     required: true,
   },
@@ -14,7 +18,6 @@ const patientSchema = new Schema({
   image: {
     type: String,
   },
-  //
   contact: { type: String },
   emergency_contact: { type: String },
   pre_existing_conditions: { type: String },

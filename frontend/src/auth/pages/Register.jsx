@@ -16,6 +16,7 @@ const Register = () => {
     first_name: "",
     last_name: "",
     phone: "",
+    image: null,
     email: "",
     password: "",
     password_confirmation: "",
@@ -32,13 +33,22 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     axios
-      .post(REGISTER_URL, { ...inputValue })
+      .post(
+        REGISTER_URL,
+        { role: "doctor", ...inputValue },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
       .then(() => {
         handleSuccess("Successfully created account.");
         setTimeout(() => {
           navigate("/login");
-        }, 3000);
+        }, 1000);
       })
       .catch((err) => {
         if (err.response.data.message) {
@@ -55,6 +65,17 @@ const Register = () => {
       ...inputValue,
       [name]: value,
     });
+  };
+
+  const handlePhotoUpload = (e) => {
+    let pickedFile;
+    if (e.target.files && e.target.files.length === 1) {
+      pickedFile = e.target.files[0];
+      setInputValue({
+        ...inputValue,
+        image: pickedFile,
+      });
+    }
   };
 
   return (
@@ -93,6 +114,13 @@ const Register = () => {
           placeholder="Phone"
           value={phone}
           onChange={handleOnChange}
+        />
+        <Input
+          type="file"
+          label="image"
+          label_txt="Upload profile photo"
+          accept=".jpg,.png,.jpeg"
+          onChange={handlePhotoUpload}
         />
         <Input
           label="email"

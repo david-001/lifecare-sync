@@ -7,7 +7,7 @@ import SERVER_URL from "../../Constants";
 import handleSuccess, { handleError } from "../../shared/components/toast";
 import PatientForm from "../forms/PatientForm";
 
-const EditPatientModal = (props) => {
+const UpdatePatientModal = (props) => {
   const { show, handleClose, triggerRefresh } = props;
   const { id } = useParams();
   const auth = useContext(AuthContext);
@@ -19,7 +19,7 @@ const EditPatientModal = (props) => {
     axios
       .patch(
         SERVER_URL + `api/patients/update/${id}`,
-        { ...patient },
+        { role: "patient", ...patient },
         {
           headers: {
             Authorization: "Bearer " + auth.token,
@@ -87,7 +87,7 @@ const EditPatientModal = (props) => {
             </div>
             <div className="pr-10">
               <div className="prose">
-                <h2 className="pb-6">Edit Patient</h2>
+                <h2 className="pb-6">Update Patient</h2>
               </div>
               <hr />
               <br />
@@ -97,15 +97,15 @@ const EditPatientModal = (props) => {
                 handleOnChange={handleOnChange}
                 handlePhotoUpload={handlePhotoUpload}
               />
+              <ToastContainer />
             </div>
           </div>
         </div>
       ) : (
         <div className="hidden"></div>
       )}
-      <ToastContainer />
     </div>
   );
 };
 
-export default EditPatientModal;
+export default UpdatePatientModal;

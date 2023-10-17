@@ -3,12 +3,11 @@ import { Patient } from "../models/patient.js";
 import mongoose from "mongoose";
 import { HttpError } from "../lib/http-error.js";
 
-const createUserDb = async (id, email, next) => {
+const createUserDb = async (id, next) => {
   // Create user in database
   try {
     const createdUser = new User({
       userId: id,
-      email: email,
     });
     await createdUser.save();
   } catch (err) {
@@ -64,7 +63,8 @@ const getPatientsByUserIdDb = async (userId, next) => {
 };
 
 const createPatientDb = async (
-  name,
+  first_name,
+  last_name,
   age,
   image,
   contact,
@@ -78,7 +78,8 @@ const createPatientDb = async (
   next
 ) => {
   const createdPatient = new Patient({
-    name,
+    first_name,
+    last_name,
     age,
     image,
     contact,
@@ -109,7 +110,8 @@ const createPatientDb = async (
 };
 
 const updatePatientDb = async (
-  name,
+  first_name,
+  last_name,
   age,
   image,
   contact,
@@ -122,7 +124,8 @@ const updatePatientDb = async (
   patient,
   next
 ) => {
-  patient.name = name;
+  patient.first_name = first_name;
+  patient.last_name = last_name;
   patient.age = age;
   patient.image = image;
   patient.contact = contact;

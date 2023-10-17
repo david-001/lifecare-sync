@@ -10,6 +10,7 @@ import createUserDb, {
   getUserFromToken,
   setToken,
 } from "../db/db-operations.js";
+import fs from "fs";
 
 export default class UsersController {
   constructor() {}
@@ -25,8 +26,17 @@ export default class UsersController {
       password_confirmation,
     } = req.body;
 
+    let image;
+    req.file ? (image = req.file.path) : (image = "");
+
     // Check if user entered inputs correctly
-    if (!email || !password || password !== password_confirmation) {
+    if (
+      !first_name ||
+      !last_name ||
+      !email ||
+      !password ||
+      password !== password_confirmation
+    ) {
       const error = new HttpError(
         "Please fill out all fields and make sure that passwords match.",
         422
@@ -41,12 +51,14 @@ export default class UsersController {
         first_name,
         last_name,
         phone,
+        image,
         email,
         password,
         next
       );
+
       // Create user in database
-      await createUserDb(createResp.result.id, createResp.result.email, next);
+      await createUserDb(createResp.result.id, next);
     } catch (err) {
       const error = new HttpError(
         "Something went wrong, could not register.",
@@ -146,15 +158,36 @@ export default class UsersController {
   };
 
   updateProfile = async (req, res, next) => {
-    const { first_name, last_name, phone, email } = req.body;
+    const { first_name, last_name, phone, email, old_image } = req.body;
+    let image;
+    req.file ? (image = req.file.path) : (image = "");
+
+    // Check if user entered inputs correctly
+    if (!first_name || !last_name) {
+      const error = new HttpError(
+        "Please fill out all fields and make sure that passwords match.",
+        422
+      );
+      return next(error);
+    }
+
+    // Delete old image
+    if (old_image && image) {
+      fs.unlink(old_image, (err) => {
+        console.log(err);
+      });
+    }
+
+    if (!image) {
+      image = old_image;
+    }
 
     try {
-      const user = await getUserFromToken(req.token, next);
-      await pangeaUpdateProfile(user.email, {
+      await pangeaUpdateProfile(email, {
         first_name,
         last_name,
         phone,
-        email,
+        image,
       });
     } catch (err) {
       next(err);

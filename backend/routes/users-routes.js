@@ -1,12 +1,17 @@
 import express from "express";
 import UsersController from "../controllers/users-controllers.js";
 import checkAuth from "../middleware/check-auth.js";
+import fileUpload from "../middleware/file-upload.js";
 
 export default class UsersRoutes {
   constructor() {
     this.usersController = new UsersController();
     this.router = express.Router();
-    this.router.post("/register", this.usersController.register);
+    this.router.post(
+      "/register",
+      fileUpload.single("image"),
+      this.usersController.register
+    );
     this.router.post("/login", this.usersController.login);
     this.router.post("/logout", this.usersController.logout);
     this.router.patch(
@@ -18,6 +23,7 @@ export default class UsersRoutes {
     this.router.patch(
       "/updateprofile",
       checkAuth,
+      fileUpload.single("image"),
       this.usersController.updateProfile
     );
   }

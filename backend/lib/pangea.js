@@ -25,6 +25,7 @@ const pangeaRegister = async (
   first_name,
   last_name,
   phone,
+  image,
   email,
   password,
   next
@@ -39,6 +40,8 @@ const pangeaRegister = async (
           first_name: first_name,
           last_name: last_name,
           phone: phone,
+          image: image,
+          role: "doctor",
         },
       }
     );

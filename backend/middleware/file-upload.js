@@ -11,7 +11,7 @@ const fileUpload = multer({
   limits: 500000,
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      if ((req.body.role = "patient")) {
+      if (req.body.role === "patient") {
         cb(null, "uploads/images/patients");
       } else {
         cb(null, "uploads/images/doctors");

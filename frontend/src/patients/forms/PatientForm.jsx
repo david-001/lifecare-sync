@@ -7,13 +7,23 @@ const PatientForm = (props) => {
   return (
     <form onSubmit={handleSubmit}>
       <Input
-        label="name"
-        label_txt="Name"
+        label="first_name"
+        label_txt="First Name"
         type="text"
-        id="name"
-        name="name"
-        placeholder="Enter name"
-        value={patient.name}
+        id="first_name"
+        name="first_name"
+        placeholder="Enter First Name"
+        value={patient.first_name}
+        onChange={handleOnChange}
+      />
+      <Input
+        label="last_name"
+        label_txt="Last Name"
+        type="text"
+        id="last_name"
+        name="last_name"
+        placeholder="Enter Last Name"
+        value={patient.last_name}
         onChange={handleOnChange}
       />
       <Input
