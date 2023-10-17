@@ -29,7 +29,7 @@ export default class PatientsController {
         user.email,
         "Accessed Patient Records",
         "Success",
-        `${user.email} accessed ${patient.name} records`,
+        `${user.email} accessed ${patient.first_name} ${patient.last_name} records`,
         req,
         next
       );
@@ -234,7 +234,7 @@ export default class PatientsController {
       // Audit
       await pangeaAudit(
         user.email,
-        `Deleted Patient record ${patient.name}`,
+        `Deleted Patient record ${patient.first_name} ${patient.last_name}`,
         "Success",
         `${user.email} deleted new patient record.`,
         req,

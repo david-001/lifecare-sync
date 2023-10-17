@@ -31,7 +31,22 @@ const PatientDetail = () => {
         })
         .then((resp) => {
           setPatient(resp.data.patient);
-          setUserName(auth.userName);
+        })
+        .then(() => {
+          axios
+            .get(SERVER_URL + `api/users/profile`, {
+              headers: {
+                Authorization: "Bearer " + auth.token,
+              },
+            })
+            .then((resp) => {
+              const first_name = resp.data.profile.first_name;
+              const last_name = resp.data.profile.last_name;
+              setUserName(`${first_name} ${last_name}`);
+            })
+            .catch((err) => {
+              handleError(err);
+            });
         })
         .catch((err) => {
           handleError(err);
@@ -41,7 +56,7 @@ const PatientDetail = () => {
     }
   }, [auth, id, navigate, updated]);
 
-  if (!patient) {
+  if (!patient || !userName) {
     return <LoadingSpinner />;
   }
 
@@ -86,7 +101,7 @@ const PatientDetail = () => {
                 </tr>
                 <tr>
                   <td className="font-bold">Doctor</td>
-                  <td className="py-2 pl-4">{patient.owner.userId}</td>
+                  <td className="py-2 pl-4">{userName}</td>
                 </tr>
               </tbody>
             </table>

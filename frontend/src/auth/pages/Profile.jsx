@@ -1,8 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import Container from "../../shared/components/Container";
-import Input from "../../shared/components/Input";
 import Button from "../../shared/components/Button";
-import handleSuccess, { handleError } from "../../shared/components/toast";
+import { handleError } from "../../shared/components/toast";
 import SERVER_URL from "../../Constants";
 import profile_photo from "../../imgs/profile_photo.jpeg";
 import axios from "axios";
@@ -10,12 +9,15 @@ import { AuthContext } from "../../shared/context/auth-context";
 import { ToastContainer } from "react-toastify";
 import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import UpdateProfileModal from "../components/UpdateProfileModal";
+import UpdatePasswordModal from "../components/UpdatePasswordModal";
 
 const Profile = () => {
   const auth = useContext(AuthContext);
   const [profile, setProfile] = useState(null);
   const [updateProfileModal, setUpdateProfileModal] = useState(false);
-  const [updated, setUpdated] = useState(false);
+  const [updatePasswordModal, setUpdatePasswordModal] = useState(false);
+  const [updatedProfile, setUpdatedProfile] = useState(false);
+  const [updatedPassword, setUpdatedPassword] = useState(false);
 
   useEffect(() => {
     if (auth.token) {
@@ -28,7 +30,10 @@ const Profile = () => {
         .then((resp) => {
           const first_name = resp.data.profile.first_name;
           const last_name = resp.data.profile.last_name;
-          const phone = resp.data.profile.phone;
+          let phone;
+          resp.data.profile.phone
+            ? (phone = resp.data.profile.phone)
+            : (phone = "");
           const image = resp.data.profile.image;
           const email = resp.data.email;
           setProfile({
@@ -43,7 +48,7 @@ const Profile = () => {
           handleError(err);
         });
     }
-  }, [auth, updated]);
+  }, [auth, updatedProfile, updatedPassword]);
 
   if (!profile) {
     return <LoadingSpinner />;
@@ -97,7 +102,8 @@ const Profile = () => {
         <Button
           variant="danger"
           onClick={() => {
-            // setDeletePatientModal(true);
+            setUpdatePasswordModal(true);
+            console.log("password");
           }}
         >
           Update Password
@@ -108,7 +114,14 @@ const Profile = () => {
           show={updateProfileModal}
           handleClose={() => setUpdateProfileModal(false)}
           profile={profile}
-          triggerRefresh={() => setUpdated((prev) => !prev)}
+          triggerRefresh={() => setUpdatedProfile((prev) => !prev)}
+        />
+      </div>
+      <div>
+        <UpdatePasswordModal
+          show={updatePasswordModal}
+          handleClose={() => setUpdatePasswordModal(false)}
+          triggerRefresh={() => setUpdatedPassword((prev) => !prev)}
         />
       </div>
       <ToastContainer />

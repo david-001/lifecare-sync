@@ -48,7 +48,7 @@ const Register = () => {
         handleSuccess("Successfully created account.");
         setTimeout(() => {
           navigate("/login");
-        }, 1000);
+        }, 2000);
       })
       .catch((err) => {
         if (err.response.data.message) {

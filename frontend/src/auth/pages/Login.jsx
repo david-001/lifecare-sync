@@ -33,7 +33,6 @@ const Login = () => {
           resp.data.token,
           resp.data.expire
         );
-        // console.log(resp.data.expire);
         navigate("/patients");
       })
       .catch((err) => {

@@ -1,4 +1,5 @@
 import { useState, useContext } from "react";
+import Container from "../../shared/components/Container";
 import Input from "../../shared/components/Input";
 import Button from "../../shared/components/Button";
 import handleSuccess, { handleError } from "../../shared/components/toast";
@@ -7,27 +8,31 @@ import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
 import { ToastContainer } from "react-toastify";
 
-const UpdateProfileModal = (props) => {
+const UpdatePasswordModal = (props) => {
   const { show, handleClose, triggerRefresh } = props;
   const auth = useContext(AuthContext);
 
-  const [profile, setProfile] = useState(props.profile);
-  const { first_name, last_name, phone } = profile;
+  const [password, setPassword] = useState({
+    password_initial: "",
+    password_update: "",
+  });
 
-  const handleSubmitProf = async (e) => {
+  const { password_initial, password_update } = password;
+
+  const handleSubmitPass = async (e) => {
     e.preventDefault();
     axios
       .patch(
-        `${SERVER_URL}api/users/updateprofile`,
-        { role: "doctor", old_image: props.profile.image, ...profile },
+        `${SERVER_URL}api/users/updatepassword`,
+        { ...password },
         {
           headers: {
             Authorization: "Bearer " + auth.token,
-            "Content-Type": "multipart/form-data",
           },
         }
       )
       .then((resp) => {
+        console.log(resp);
         handleSuccess(resp.data.response);
         handleClose();
       })
@@ -37,25 +42,13 @@ const UpdateProfileModal = (props) => {
       });
   };
 
-  const handleOnProfChange = (e) => {
+  const handleOnPassChange = (e) => {
     const { name, value } = e.target;
-    setProfile({
-      ...profile,
+    setPassword({
+      ...password,
       [name]: value,
     });
   };
-
-  const handlePhotoUpload = (e) => {
-    let pickedFile;
-    if (e.target.files && e.target.files.length === 1) {
-      pickedFile = e.target.files[0];
-      setProfile({
-        ...profile,
-        image: pickedFile,
-      });
-    }
-  };
-
   return (
     <div>
       {show ? (
@@ -87,54 +80,33 @@ const UpdateProfileModal = (props) => {
             </div>
             <div className="pr-10">
               <div className="prose">
-                <h2 className="pb-6">Update My Profile</h2>
+                <h2 className="pb-6">Update Password</h2>
               </div>
-
-              <form onSubmit={handleSubmitProf}>
+              <form onSubmit={handleSubmitPass}>
                 <Input
-                  label="first_name"
-                  label_txt="First Name"
-                  type="text"
-                  id="first_name"
-                  name="first_name"
-                  placeholder="First Name"
-                  value={first_name}
-                  onChange={handleOnProfChange}
+                  label="password_initial"
+                  label_txt="Initial Password"
+                  type="password"
+                  id="password_initial"
+                  name="password_initial"
+                  placeholder="Initial Password"
+                  value={password_initial}
+                  onChange={handleOnPassChange}
                 />
                 <Input
-                  label="last_name"
-                  label_txt="Last Name"
-                  type="text"
-                  id="last_name"
-                  name="last_name"
-                  placeholder="Last Name"
-                  value={last_name}
-                  onChange={handleOnProfChange}
+                  label="password_update"
+                  label_txt="Updated Password"
+                  type="password"
+                  id="password_update"
+                  name="password_update"
+                  placeholder="Update Password"
+                  value={password_update}
+                  onChange={handleOnPassChange}
                 />
-                <Input
-                  label="phone"
-                  label_txt="Phone"
-                  type="text"
-                  id="phone"
-                  name="phone"
-                  placeholder="Phone"
-                  value={phone}
-                  onChange={handleOnProfChange}
-                />
-                <Input
-                  type="file"
-                  label="image"
-                  label_txt="Upload profile photo"
-                  accept=".jpg,.png,.jpeg"
-                  onChange={handlePhotoUpload}
-                />
-
-                <br />
                 <Button variant="primary" type="submit">
-                  Update Profile
+                  Update Password
                 </Button>
               </form>
-              <ToastContainer />
             </div>
           </div>
         </div>
@@ -144,4 +116,4 @@ const UpdateProfileModal = (props) => {
     </div>
   );
 };
-export default UpdateProfileModal;
+export default UpdatePasswordModal;

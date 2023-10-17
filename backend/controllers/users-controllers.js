@@ -121,11 +121,11 @@ export default class UsersController {
 
   // Update password
   updatePassword = async (req, res, next) => {
-    const { token, password_initial, password_update } = req.body;
+    const { password_initial, password_update } = req.body;
     let passUpdateResp;
     try {
       passUpdateResp = await pangeaUpdatePassword(
-        token,
+        req.token,
         password_initial,
         password_update,
         next

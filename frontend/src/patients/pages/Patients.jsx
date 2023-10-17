@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import SERVER_URL from "../../Constants";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../shared/context/auth-context";
 import { handleError } from "../../shared/components/toast";
 import Card from "../../shared/components/Card";

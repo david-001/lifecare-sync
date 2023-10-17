@@ -43,7 +43,7 @@ const AddPatient = () => {
         handleSuccess("Successfully added patient!");
         setTimeout(() => {
           navigate("/patients");
-        }, 3000);
+        }, 2000);
       })
       .catch((err) => {
         handleError(err.response.data.message);

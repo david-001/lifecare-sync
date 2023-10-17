@@ -1,15 +1,6 @@
 const Input = (props) => {
-  const {
-    label,
-    label_txt,
-    type,
-    id,
-    name,
-    placeholder,
-    value,
-    accept,
-    onChange,
-  } = props;
+  const { label, label_txt, type, id, name, placeholder, value, onChange } =
+    props;
 
   let element;
   if (
