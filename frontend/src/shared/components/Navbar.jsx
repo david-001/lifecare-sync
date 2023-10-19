@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/auth-context";
 // import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import { handleError } from "./toast";
-import SERVER_URL, { LOCAL_URL } from "../../Constants";
 import axios from "axios";
 
 const Navbar = () => {
@@ -13,7 +12,7 @@ const Navbar = () => {
   useEffect(() => {
     if (auth.userId) {
       axios
-        .get(SERVER_URL + `api/users/profile`, {
+        .get(process.env.REACT_APP_SERVER_URL + `api/users/profile`, {
           headers: {
             Authorization: "Bearer " + auth.token,
           },
@@ -62,7 +61,7 @@ const Navbar = () => {
       <ul className="font-medium flex flex-col bg-blue-600 md:flex-row md:space-x-8 ">
         <li>
           <a
-            href={`${LOCAL_URL}profile`}
+            href={`${process.env.REACT_APP_URL}profile`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Profile
@@ -70,7 +69,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${LOCAL_URL}patients`}
+            href={`${process.env.REACT_APP_URL}patients`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Patients
@@ -78,7 +77,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${LOCAL_URL}addpatient`}
+            href={`${process.env.REACT_APP_URL}addpatient`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Add Patient
@@ -86,7 +85,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${LOCAL_URL}logout`}
+            href={`${process.env.REACT_APP_URL}logout`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Logout
@@ -99,7 +98,7 @@ const Navbar = () => {
       <ul className="font-medium flex flex-col bg-blue-600 md:flex-row md:space-x-8 ">
         <li>
           <a
-            href={`${LOCAL_URL}register`}
+            href={`${process.env.REACT_APP_URL}register`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Register
@@ -107,7 +106,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${LOCAL_URL}login`}
+            href={`${process.env.REACT_APP_URL}login`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Login
@@ -143,7 +142,11 @@ const Navbar = () => {
             />
           </svg>
           <a
-            href={auth.token ? `${LOCAL_URL}patients` : `${LOCAL_URL}`}
+            href={
+              auth.token
+                ? `${process.env.REACT_APP_URL}patients`
+                : `${process.env.REACT_APP_URL}`
+            }
             className="flex items-center"
           >
             <span className="font-medium text-xl block py-2 pl-3 pr-4 text-white">
