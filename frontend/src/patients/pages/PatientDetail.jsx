@@ -4,12 +4,12 @@ import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
 import { useParams, useNavigate } from "react-router-dom";
 import { handleError } from "../../shared/components/toast";
-import SERVER_URL from "../../Constants";
 import profile_photo from "../../imgs/profile_photo.jpeg";
 import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import Button from "../../shared/components/Button";
 import UpdatePatientModal from "../components/UpdatePatientModal";
 import DeletePatientModal from "../components/DeletePatientModal";
+import "react-toastify/dist/ReactToastify.css";
 
 const PatientDetail = () => {
   const auth = useContext(AuthContext);
@@ -24,7 +24,7 @@ const PatientDetail = () => {
   useEffect(() => {
     if (auth.token) {
       axios
-        .get(SERVER_URL + `api/patients/fetch/${id}`, {
+        .get(`${process.env.REACT_APP_SERVER_URL}api/patients/fetch/${id}`, {
           headers: {
             Authorization: "Bearer " + auth.token,
           },
@@ -34,7 +34,7 @@ const PatientDetail = () => {
         })
         .then(() => {
           axios
-            .get(SERVER_URL + `api/users/profile`, {
+            .get(process.env.REACT_APP_SERVER_URL + `api/users/profile`, {
               headers: {
                 Authorization: "Bearer " + auth.token,
               },
@@ -71,7 +71,11 @@ const PatientDetail = () => {
         <div className="flex flex-wrap">
           <div className="pb-10 flex justify-center items-center lg:w-52">
             <img
-              src={patient.image ? SERVER_URL + patient.image : profile_photo}
+              src={
+                patient.image
+                  ? process.env.REACT_APP_SERVER_URL + patient.image
+                  : profile_photo
+              }
               alt={`${patient.first_name} ${patient.last_name}`}
             />
           </div>

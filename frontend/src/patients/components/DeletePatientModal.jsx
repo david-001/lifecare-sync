@@ -1,12 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { useParams } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
-import SERVER_URL from "../../Constants";
 import Button from "../../shared/components/Button";
 import handleSuccess, { handleError } from "../../shared/components/toast";
+import "react-toastify/dist/ReactToastify.css";
 
 const DeletePatientModal = (props) => {
   const { show, handleClose, triggerRefresh } = props;
@@ -18,7 +17,7 @@ const DeletePatientModal = (props) => {
     e.preventDefault();
 
     axios
-      .delete(SERVER_URL + `api/patients/delete/${id}`, {
+      .delete(process.env.REACT_APP_SERVER_URL + `api/patients/delete/${id}`, {
         headers: {
           Authorization: "Bearer " + auth.token,
           "Content-Type": "multipart/form-data",
@@ -78,7 +77,6 @@ const DeletePatientModal = (props) => {
                     Delete
                   </Button>
                 </div>
-                <ToastContainer />
               </div>
             </div>
           </div>

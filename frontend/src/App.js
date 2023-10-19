@@ -1,47 +1,55 @@
-import { BrowserRouter, Route, Navigate, Routes } from "react-router-dom";
-import Register from "./auth/pages/Register";
-import Login from "./auth/pages/Login";
-import Logout from "./auth/pages/Logout";
+import React, { Suspense } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+// import Register from "./auth/pages/Register";
+// import Login from "./auth/pages/Login";
+// import Logout from "./auth/pages/Logout";
 import Navbar from "./shared/components/Navbar";
-import Home from "./patients/pages/Home";
+// import Home from "./shared/pages/Home";
 import { AuthContext } from "./shared/context/auth-context";
 import { useAuth } from "./shared/hooks/auth-hook";
-import Patients from "./patients/pages/Patients";
-import AddPatient from "./patients/pages/AddPatient";
-import PatientDetail from "./patients/pages/PatientDetail";
-import Profile from "./auth/pages/Profile";
+import LoadingSpinner from "./shared/components/LoadingSpinner";
+// import Patients from "./patients/pages/Patients";
+// import AddPatient from "./patients/pages/AddPatient";
+// import PatientDetail from "./patients/pages/PatientDetail";
+// import Profile from "./auth/pages/Profile";
+// import NotFound from "./shared/pages/NotFound";
 
-// import Home from "./shared/components/Home";
-// import Login from "./users/components/Login";
-// import Register from "./users/components/Register";
-// import Logout from "./users/components/Logout";
-// import Header from "./shared/components/Header";
-// import AddPatient from "./patients/components/AddPatient";
-// import PatientDetail from "./patients/components/PatientDetail";
-// import UpdatePassword from "./users/components/UpdatePassword";
+// Lazy loading
+const Register = React.lazy(() => import("./auth/pages/Register"));
+const Login = React.lazy(() => import("./auth/pages/Login"));
+const Logout = React.lazy(() => import("./auth/pages/Logout"));
+const Home = React.lazy(() => import("./shared/pages/Home"));
+const Patients = React.lazy(() => import("./patients/pages/Patients"));
+const AddPatient = React.lazy(() => import("./patients/pages/AddPatient"));
+const PatientDetail = React.lazy(() =>
+  import("./patients/pages/PatientDetail")
+);
+const Profile = React.lazy(() => import("./auth/pages/Profile"));
+const NotFound = React.lazy(() => import("./shared/pages/NotFound"));
 
 const App = () => {
-  const { token, login, logout, userId, userName } = useAuth();
+  const { token, login, logout, userId } = useAuth();
 
   let routes;
   if (token) {
     routes = (
       <Routes>
-        <Route path="/home" element={<Home />} />
         <Route path="/patients" element={<Patients />} />
         <Route path="/addpatient" element={<AddPatient />} />
         <Route path="/patientdetail/:id" element={<PatientDetail />} />
         <Route path="logout" element={<Logout />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="*" element={<NotFound loggedIn={true} />} />
       </Routes>
     );
   } else {
     routes = (
       <Routes>
-        <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="logout" element={<Logout />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
+        <Route path="*" element={<NotFound loggedIn={false} />} />
       </Routes>
     );
   }
@@ -52,7 +60,6 @@ const App = () => {
         isLoggedIn: !!token,
         token: token,
         userId: userId,
-        userName: userName,
         login: login,
         logout: logout,
       }}
@@ -60,52 +67,21 @@ const App = () => {
       <BrowserRouter>
         <Navbar />
         <main>
-          <div className="bg-gradient-to-b from-blue-500 to-blue-50 flex justify-center min-h-screen py-20 px-10">
-            {routes}
+          <div className="bg-gradient-to-br from-blue-500 to-blue-50 flex justify-center min-h-screen py-32 px-10">
+            <Suspense
+              fallback={
+                <div className="flex justify-center items-center">
+                  <LoadingSpinner />
+                </div>
+              }
+            >
+              {routes}
+            </Suspense>
           </div>
         </main>
       </BrowserRouter>
     </AuthContext.Provider>
   );
-  // const { token, login, logout, userId } = useAuth();
-  // let routes;
-  // if (token) {
-  //   routes = (
-  //     <Routes>
-  //       <Route path="/patientdetail/:id" element={<PatientDetail />} />
-  //       <Route path="/addpatient" element={<AddPatient />} />
-  //       <Route path="/updatepassword" element={<UpdatePassword />} />
-  //       <Route path="/logout" element={<Logout />} />
-  //       <Route path="/" element={<Home />} />
-  //     </Routes>
-  //   );
-  // } else {
-  //   routes = (
-  //     <Routes>
-  //       <Route path="/" element={<Home />} />
-  //       <Route path="/register" element={<Register />} />
-  //       <Route path="/login" element={<Login />} />
-  //     </Routes>
-  //   );
-  // }
-  // return (
-  //   <div className="bgcolor">
-  //     <AuthContext.Provider
-  //       value={{
-  //         isLoggedIn: !!token,
-  //         token: token,
-  //         userId: userId,
-  //         login: login,
-  //         logout: logout,
-  //       }}
-  //     >
-  //       <BrowserRouter>
-  //         <Header />
-  //         {routes}
-  //       </BrowserRouter>
-  //     </AuthContext.Provider>
-  //   </div>
-  // );
 };
 
 export default App;

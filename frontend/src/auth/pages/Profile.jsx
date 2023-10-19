@@ -2,14 +2,13 @@ import { useState, useEffect, useContext } from "react";
 import Container from "../../shared/components/Container";
 import Button from "../../shared/components/Button";
 import { handleError } from "../../shared/components/toast";
-import SERVER_URL from "../../Constants";
 import profile_photo from "../../imgs/profile_photo.jpeg";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
-import { ToastContainer } from "react-toastify";
 import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import UpdateProfileModal from "../components/UpdateProfileModal";
 import UpdatePasswordModal from "../components/UpdatePasswordModal";
+import "react-toastify/dist/ReactToastify.css";
 
 const Profile = () => {
   const auth = useContext(AuthContext);
@@ -22,7 +21,7 @@ const Profile = () => {
   useEffect(() => {
     if (auth.token) {
       axios
-        .get(`${SERVER_URL}api/users/profile`, {
+        .get(`${process.env.REACT_APP_SERVER_URL}api/users/profile`, {
           headers: {
             Authorization: "Bearer " + auth.token,
           },
@@ -65,7 +64,11 @@ const Profile = () => {
         <div className="flex flex-wrap">
           <div className="pb-10 flex justify-center items-center lg:w-52">
             <img
-              src={profile.image ? SERVER_URL + profile.image : profile_photo}
+              src={
+                profile.image
+                  ? process.env.REACT_APP_SERVER_URL + profile.image
+                  : profile_photo
+              }
               alt={`${profile.first_name} ${profile.last_name}`}
             />
           </div>
@@ -124,7 +127,6 @@ const Profile = () => {
           triggerRefresh={() => setUpdatedPassword((prev) => !prev)}
         />
       </div>
-      <ToastContainer />
     </Container>
   );
 };

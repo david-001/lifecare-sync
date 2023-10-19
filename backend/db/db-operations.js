@@ -70,6 +70,7 @@ const createPatientDb = async (
   contact,
   emergency_contact,
   pre_existing_conditions,
+  symptoms,
   diagnosis,
   treatment,
   medication,
@@ -85,6 +86,7 @@ const createPatientDb = async (
     contact,
     emergency_contact,
     pre_existing_conditions,
+    symptoms,
     diagnosis,
     treatment,
     medication,
@@ -117,6 +119,7 @@ const updatePatientDb = async (
   contact,
   emergency_contact,
   pre_existing_conditions,
+  symptoms,
   diagnosis,
   treatment,
   medication,
@@ -131,6 +134,7 @@ const updatePatientDb = async (
   patient.contact = contact;
   patient.emergency_contact = emergency_contact;
   patient.pre_existing_conditions = pre_existing_conditions;
+  patient.symptoms = symptoms;
   patient.diagnosis = diagnosis;
   patient.treatment = treatment;
   patient.medication = medication;

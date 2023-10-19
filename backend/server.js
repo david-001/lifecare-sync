@@ -19,8 +19,10 @@ mongoose.connect(currentDb, {
 const app = express();
 // app.use(bodyParser.json());
 
-// Location for images
+// Location for images.
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
+// Use for deployment
+// app.use(express.static(path.join("public")));
 
 // set CORS headers on response from this API using the `cors` NPM package
 app.use(
@@ -49,6 +51,10 @@ const usersRoutes = new UsersRoutes();
 const patientsRoutes = new PatientsRoutes();
 app.use("/api/users", usersRoutes.router);
 app.use("/api/patients", patientsRoutes.router);
+
+app.use((req, res, next) => {
+  res.sendFile(path.resolve(_dirname, "public", "index.html"));
+});
 
 app.use((error, req, res, next) => {
   if (req.file) {

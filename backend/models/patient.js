@@ -21,6 +21,7 @@ const patientSchema = new Schema({
   contact: { type: String },
   emergency_contact: { type: String },
   pre_existing_conditions: { type: String },
+  symptoms: { type: String },
   diagnosis: { type: String },
   treatment: { type: String },
   medication: { type: String },

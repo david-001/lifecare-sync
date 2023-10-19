@@ -2,15 +2,12 @@ import { useState } from "react";
 import Container from "../../shared/components/Container";
 import Input from "../../shared/components/Input";
 import Button from "../../shared/components/Button";
-import { ToastContainer } from "react-toastify";
 import handleSuccess, { handleError } from "../../shared/components/toast";
 import { useNavigate } from "react-router-dom";
-import SERVER_URL from "../../Constants";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
-  const REGISTER_URL = SERVER_URL + "api/users/register";
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     first_name: "",
@@ -36,7 +33,7 @@ const Register = () => {
 
     axios
       .post(
-        REGISTER_URL,
+        `${process.env.REACT_APP_SERVER_URL}api/users/register`,
         { role: "doctor", ...inputValue },
         {
           headers: {
@@ -157,7 +154,6 @@ const Register = () => {
           Register
         </Button>
       </form>
-      <ToastContainer />
     </Container>
   );
 };

@@ -74,6 +74,16 @@ const PatientForm = (props) => {
         onChange={handleOnChange}
       />
       <Input
+        label="symptoms"
+        label_txt="Symptoms"
+        type="textarea"
+        id="symptoms"
+        name="symptoms"
+        placeholder="Enter Symptoms"
+        value={patient.symptoms}
+        onChange={handleOnChange}
+      />
+      <Input
         label="diagnosis"
         label_txt="Diagnosis"
         type="textarea"

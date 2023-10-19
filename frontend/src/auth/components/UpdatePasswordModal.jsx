@@ -1,12 +1,10 @@
 import { useState, useContext } from "react";
-import Container from "../../shared/components/Container";
 import Input from "../../shared/components/Input";
 import Button from "../../shared/components/Button";
 import handleSuccess, { handleError } from "../../shared/components/toast";
-import SERVER_URL from "../../Constants";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
-import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UpdatePasswordModal = (props) => {
   const { show, handleClose, triggerRefresh } = props;
@@ -23,7 +21,7 @@ const UpdatePasswordModal = (props) => {
     e.preventDefault();
     axios
       .patch(
-        `${SERVER_URL}api/users/updatepassword`,
+        `${process.env.REACT_APP_SERVER_URL}api/users/updatepassword`,
         { ...password },
         {
           headers: {
@@ -103,6 +101,7 @@ const UpdatePasswordModal = (props) => {
                   value={password_update}
                   onChange={handleOnPassChange}
                 />
+                <br />
                 <Button variant="primary" type="submit">
                   Update Password
                 </Button>

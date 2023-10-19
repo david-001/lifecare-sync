@@ -2,16 +2,13 @@ import React, { useState, useContext } from "react";
 import Container from "../../shared/components/Container";
 import Input from "../../shared/components/Input";
 import Button from "../../shared/components/Button";
-import { ToastContainer } from "react-toastify";
 import { AuthContext } from "../../shared/context/auth-context";
 import { useNavigate } from "react-router-dom";
 import { handleError } from "../../shared/components/toast";
 import axios from "axios";
-import SERVER_URL from "../../Constants";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
-  const LOGIN_URL = SERVER_URL + "api/users/login";
-
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
@@ -25,14 +22,11 @@ const Login = () => {
     e.preventDefault();
 
     axios
-      .post(LOGIN_URL, { ...inputValue })
+      .post(`${process.env.REACT_APP_SERVER_URL}api/users/login`, {
+        ...inputValue,
+      })
       .then((resp) => {
-        auth.login(
-          resp.data.userId,
-          resp.data.userName,
-          resp.data.token,
-          resp.data.expire
-        );
+        auth.login(resp.data.userId, resp.data.token, resp.data.expire);
         navigate("/patients");
       })
       .catch((err) => {
@@ -83,7 +77,6 @@ const Login = () => {
           Login
         </Button>
       </form>
-      <ToastContainer />
     </Container>
   );
 };

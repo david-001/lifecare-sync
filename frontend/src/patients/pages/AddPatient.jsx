@@ -3,10 +3,9 @@ import Container from "../../shared/components/Container";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
-import { ToastContainer } from "react-toastify";
 import handleSuccess, { handleError } from "../../shared/components/toast";
-import SERVER_URL from "../../Constants";
 import PatientForm from "../forms/PatientForm";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddPatient = () => {
   const auth = useContext(AuthContext);
@@ -19,6 +18,7 @@ const AddPatient = () => {
     contact: "",
     emergency_contact: "",
     pre_existing_conditions: "",
+    symptoms: "",
     diagnosis: "",
     treatment: "",
     medication: "",
@@ -30,7 +30,7 @@ const AddPatient = () => {
 
     axios
       .post(
-        SERVER_URL + `api/patients/new`,
+        `${process.env.REACT_APP_SERVER_URL}api/patients/new`,
         { role: "patient", ...patient },
         {
           headers: {
@@ -80,7 +80,6 @@ const AddPatient = () => {
         handleOnChange={handleOnChange}
         handlePhotoUpload={handlePhotoUpload}
       />
-      <ToastContainer />
     </Container>
   );
 };

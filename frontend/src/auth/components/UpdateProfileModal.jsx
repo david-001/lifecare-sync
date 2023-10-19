@@ -2,9 +2,9 @@ import { useState, useContext } from "react";
 import Input from "../../shared/components/Input";
 import Button from "../../shared/components/Button";
 import handleSuccess, { handleError } from "../../shared/components/toast";
-import SERVER_URL from "../../Constants";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
+import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
 const UpdateProfileModal = (props) => {
@@ -18,7 +18,7 @@ const UpdateProfileModal = (props) => {
     e.preventDefault();
     axios
       .patch(
-        `${SERVER_URL}api/users/updateprofile`,
+        `${process.env.REACT_APP_SERVER_URL}api/users/updateprofile`,
         { role: "doctor", old_image: props.profile.image, ...profile },
         {
           headers: {

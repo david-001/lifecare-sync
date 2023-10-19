@@ -116,7 +116,7 @@ export default class UsersController {
       return next(error);
     }
 
-    res.status(201).json({ userId: user.userId, token: null });
+    res.status(201).json({ response: "Successfully logged out." });
   };
 
   // Update password

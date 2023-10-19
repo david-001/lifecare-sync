@@ -1,11 +1,10 @@
 import { useState, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
-import SERVER_URL from "../../Constants";
 import handleSuccess, { handleError } from "../../shared/components/toast";
 import PatientForm from "../forms/PatientForm";
+import "react-toastify/dist/ReactToastify.css";
 
 const UpdatePatientModal = (props) => {
   const { show, handleClose, triggerRefresh } = props;
@@ -18,7 +17,7 @@ const UpdatePatientModal = (props) => {
 
     axios
       .patch(
-        SERVER_URL + `api/patients/update/${id}`,
+        process.env.REACT_APP_SERVER_URL + `api/patients/update/${id}`,
         { role: "patient", ...patient },
         {
           headers: {
@@ -97,7 +96,6 @@ const UpdatePatientModal = (props) => {
                 handleOnChange={handleOnChange}
                 handlePhotoUpload={handlePhotoUpload}
               />
-              <ToastContainer />
             </div>
           </div>
         </div>

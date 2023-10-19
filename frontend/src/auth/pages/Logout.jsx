@@ -3,14 +3,35 @@ import Container from "../../shared/components/Container";
 import { useNavigate } from "react-router-dom";
 import Button from "../../shared/components/Button";
 import { AuthContext } from "../../shared/context/auth-context";
+import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
 
 const Logout = () => {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
 
   const onLogout = () => {
-    auth.logout();
-    navigate("/");
+    axios
+      .post(
+        `${process.env.REACT_APP_SERVER_URL}api/users/logout`,
+        {},
+        {
+          headers: {
+            Authorization: "Bearer " + auth.token,
+          },
+        }
+      )
+      .then(() => {
+        auth.logout();
+        navigate("/");
+      })
+      .catch((err) => {
+        if (err.response.data.message) {
+          // handleError(err.response.data.message);
+        } else {
+          // handleError(err.response.data);
+        }
+      });
   };
 
   const onCancel = () => {

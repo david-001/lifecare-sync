@@ -13,7 +13,7 @@ export default class UsersRoutes {
       this.usersController.register
     );
     this.router.post("/login", this.usersController.login);
-    this.router.post("/logout", this.usersController.logout);
+    this.router.post("/logout", checkAuth, this.usersController.logout);
     this.router.patch(
       "/updatepassword",
       checkAuth,
