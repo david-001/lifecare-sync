@@ -5,8 +5,7 @@ import cors from "cors";
 import { handleError } from "./lib/http-error.js";
 import fs from "fs";
 import path from "path";
-import bodyParser from "body-parser";
-
+import { fileURLToPath } from "url";
 import UsersRoutes from "./routes/users-routes.js";
 import PatientsRoutes from "./routes/patients-routes.js";
 
@@ -52,8 +51,11 @@ const patientsRoutes = new PatientsRoutes();
 app.use("/api/users", usersRoutes.router);
 app.use("/api/patients", patientsRoutes.router);
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/", express.static(path.join(__dirname, "public")));
 app.use((req, res, next) => {
-  res.sendFile(path.resolve(_dirname, "public", "index.html"));
+  res.sendFile(path.resolve(__dirname, "public", "index.html"));
 });
 
 app.use((error, req, res, next) => {
