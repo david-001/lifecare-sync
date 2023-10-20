@@ -29,6 +29,14 @@ app.use(
   })
 );
 
+app.use(function (req, res, next) {
+  res.setHeader(
+    "Content-Security-Policy-Report-Only",
+    "default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self'"
+  );
+  next();
+});
+
 // The method `.use` sets up middleware for the Express application
 app.use(express.json());
 // this parses requests sent by `$.ajax`, which use a different content type
