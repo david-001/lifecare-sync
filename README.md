@@ -1,38 +1,34 @@
 # Lifecare Sync App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Requirements
 
-## Node.js Backend
+1. This app requires the security services from Pangea. Create an account at [Pangea](https://login.aws.us.pangea.cloud/authorize?redirect_uri=https%3A%2F%2Fconsole.pangea.cloud&state=6xpa7trXAvBQa5vxirTooogabcf2sk5x)
 
-In the backend directory, run:
+2. This app requires MongoDB. Create an account at [MongoDB](https://www.mongodb.com/)
 
-### `node server.js`
+## Running this app locally
 
-## React Frontend
+1. Navigate to the frontend directory and install the dependencies.
+   `npm install`
 
-In the frontend directory, run:
+2. Create a file called .env in this directory. Put the following code in this directory.
+   `REACT_APP_SERVER_URL=http://localhost:8000/`
 
-### `npm start`
+3. Build the app.
+   `npm run build`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+4. Copy the contents of the build folder in the frontend directory.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+5. Navigate to the backend directory and paste the contents in the public folder.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+6. Install the dependencies.
+   `npm install`
 
-### Picture
+7. Create a file called .env in this directory. Put the following code in this directory.
 
-Photo by <a href="https://unsplash.com/@marceloleal80?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Marcelo Leal</a> on <a href="https://unsplash.com/photos/k7ll1hpdhFA?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-
-Photo by <a href="https://unsplash.com/@chrisjoelcampbell?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Christopher Campbell</a> on <a href="https://unsplash.com/photos/rDEOVtE7vOs?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-
-Photo by <a href="https://unsplash.com/@sspaula?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Sergio de Paula</a> on <a href="https://unsplash.com/photos/c_GmwfHBDzk?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-
-Photo by <a href="https://unsplash.com/@jkakaroto?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Jonas Kakaroto</a> on <a href="https://unsplash.com/photos/mjRwhvqEC0U?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-
-Photo by <a href="https://unsplash.com/@houcinencibphotography?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Houcine Ncib</a> on <a href="https://unsplash.com/photos/B4TjXnI0Y2c?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-
-Photo by <a href="https://unsplash.com/@cikstefan?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Štefan Štefančík</a> on <a href="https://unsplash.com/photos/QXevDflbl8A?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-
-Photo by <a href="https://unsplash.com/@matheusferrero?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Matheus Ferrero</a> on <a href="https://unsplash.com/photos/pg_WCHWSdT8?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+```
+PANGEA_TOKEN= {YOUR TOKEN}
+PANGEA_DOMAIN= {YOUR DOMAIN}
+MONGODB_USER= {YOUR MONGODB USER}
+MONGODB_PWD= {YOU MONGODB PASSWORD}
+```
