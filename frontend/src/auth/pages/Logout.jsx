@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import Button from "../../shared/components/Button";
 import { AuthContext } from "../../shared/context/auth-context";
 import axios from "axios";
-import "react-toastify/dist/ReactToastify.css";
 
 const Logout = () => {
   const navigate = useNavigate();
@@ -25,13 +24,7 @@ const Logout = () => {
         auth.logout();
         navigate("/");
       })
-      .catch((err) => {
-        if (err.response.data.message) {
-          // handleError(err.response.data.message);
-        } else {
-          // handleError(err.response.data);
-        }
-      });
+      .catch((err) => {});
   };
 
   const onCancel = () => {

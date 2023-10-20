@@ -98,6 +98,7 @@ const Patients = () => {
         </div>
       </div>
       <div className="w-full flex flex-wrap justify-center">{patientCards}</div>
+      <ToastContainer />
     </div>
   );
 };

@@ -9,6 +9,7 @@ import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import UpdateProfileModal from "../components/UpdateProfileModal";
 import UpdatePasswordModal from "../components/UpdatePasswordModal";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const Profile = () => {
   const auth = useContext(AuthContext);
@@ -127,6 +128,7 @@ const Profile = () => {
           triggerRefresh={() => setUpdatedPassword((prev) => !prev)}
         />
       </div>
+      <ToastContainer />
     </Container>
   );
 };

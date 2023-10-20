@@ -5,6 +5,7 @@ import handleSuccess, { handleError } from "../../shared/components/toast";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const UpdatePasswordModal = (props) => {
   const { show, handleClose, triggerRefresh } = props;
@@ -106,6 +107,7 @@ const UpdatePasswordModal = (props) => {
                   Update Password
                 </Button>
               </form>
+              <ToastContainer />
             </div>
           </div>
         </div>

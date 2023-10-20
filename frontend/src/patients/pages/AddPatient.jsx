@@ -6,6 +6,7 @@ import { AuthContext } from "../../shared/context/auth-context";
 import handleSuccess, { handleError } from "../../shared/components/toast";
 import PatientForm from "../forms/PatientForm";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const AddPatient = () => {
   const auth = useContext(AuthContext);
@@ -80,6 +81,7 @@ const AddPatient = () => {
         handleOnChange={handleOnChange}
         handlePhotoUpload={handlePhotoUpload}
       />
+      <ToastContainer />
     </Container>
   );
 };

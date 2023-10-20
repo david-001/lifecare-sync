@@ -6,6 +6,7 @@ import handleSuccess, { handleError } from "../../shared/components/toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -154,6 +155,7 @@ const Register = () => {
           Register
         </Button>
       </form>
+      <ToastContainer />
     </Container>
   );
 };
