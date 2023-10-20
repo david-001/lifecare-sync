@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/auth-context";
-import { useNavigate } from "react-router-dom";
+// import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import { handleError } from "./toast";
 import axios from "axios";
 
@@ -8,7 +8,6 @@ const Navbar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const auth = useContext(AuthContext);
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (auth.userId) {
@@ -61,44 +60,36 @@ const Navbar = () => {
     options = (
       <ul className="font-medium flex flex-col bg-blue-600 md:flex-row md:space-x-8 ">
         <li>
-          <button
+          <a
+            href={`${process.env.REACT_APP_SERVER_URL}profile`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
-            onClick={() => {
-              navigate("/profile");
-            }}
           >
             Profile
-          </button>
+          </a>
         </li>
         <li>
-          <button
+          <a
+            href={`${process.env.REACT_APP_SERVER_URL}patients`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
-            onClick={() => {
-              navigate("/patients");
-            }}
           >
             Patients
-          </button>
+          </a>
         </li>
         <li>
-          <button
+          <a
+            href={`${process.env.REACT_APP_SERVER_URL}addpatient`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
-            onClick={() => {
-              navigate("/addpatient");
-            }}
           >
             Add Patient
-          </button>
+          </a>
         </li>
         <li>
-          <button
+          <a
+            href={`${process.env.REACT_APP_SERVER_URL}logout`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
-            onClick={() => {
-              navigate("/logout");
-            }}
           >
             Logout
-          </button>
+          </a>
         </li>
       </ul>
     );
@@ -106,24 +97,20 @@ const Navbar = () => {
     options = (
       <ul className="font-medium flex flex-col bg-blue-600 md:flex-row md:space-x-8 ">
         <li>
-          <button
+          <a
+            href={`${process.env.REACT_APP_SERVER_URL}register`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
-            onClick={() => {
-              navigate("/register");
-            }}
           >
             Register
-          </button>
+          </a>
         </li>
         <li>
-          <button
+          <a
+            href={`${process.env.REACT_APP_SERVER_URL}login`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
-            onClick={() => {
-              navigate("/login");
-            }}
           >
             Login
-          </button>
+          </a>
         </li>
       </ul>
     );
@@ -154,16 +141,18 @@ const Navbar = () => {
               // d="M1 1h15M1 7h15M1 13h15"
             />
           </svg>
-          <button
-            className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
-            onClick={() => {
-              auth.token ? navigate("/patients") : navigate("/");
-            }}
+          <a
+            href={
+              auth.token
+                ? `${process.env.REACT_APP_SERVER_URL}patients`
+                : `${process.env.REACT_APP_SERVER_URL}`
+            }
+            className="flex items-center"
           >
             <span className="font-medium text-xl block py-2 pl-3 pr-4 text-white">
               Lifecare Sync
             </span>
-          </button>
+          </a>
         </div>
         {user}
         <button
