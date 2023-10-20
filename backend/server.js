@@ -30,17 +30,6 @@ app.use(
   })
 );
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-//   );
-//   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
-
-//   next();
-// });
-
 // The method `.use` sets up middleware for the Express application
 app.use(express.json());
 // this parses requests sent by `$.ajax`, which use a different content type
@@ -51,12 +40,12 @@ const patientsRoutes = new PatientsRoutes();
 app.use("/api/users", usersRoutes.router);
 app.use("/api/patients", patientsRoutes.router);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use("/", express.static(path.join(__dirname, "public")));
-app.use((req, res, next) => {
-  res.sendFile(path.resolve(__dirname, "public", "index.html"));
-});
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+// app.use("/", express.static(path.join(__dirname, "public")));
+// app.use((req, res, next) => {
+//   res.sendFile(path.resolve(__dirname, "public", "index.html"));
+// });
 
 app.use((error, req, res, next) => {
   if (req.file) {
@@ -76,7 +65,6 @@ app.set("port", port);
 
 app.use(handleError);
 
-// run API on designated port (4741 in this case)
 app.listen(port, () => {
   console.log("listening on port " + port);
 });
