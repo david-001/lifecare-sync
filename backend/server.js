@@ -20,7 +20,7 @@ const app = express();
 // Location for images.
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
 // Use for deployment
-app.use(express.static(path.join("public")));
+// app.use(express.static(path.join("public")));
 
 // set CORS headers on response from this API using the `cors` NPM package
 app.use(
@@ -49,7 +49,7 @@ app.use("/api/patients", patientsRoutes.router);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// app.use("/", express.static(path.join(__dirname, "public")));
+app.use("/*", express.static(path.join(__dirname, "public")));
 app.use((req, res, next) => {
   res.sendFile(path.resolve(__dirname, "public", "index.html"));
 });
