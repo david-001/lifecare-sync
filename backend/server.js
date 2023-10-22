@@ -47,12 +47,12 @@ const patientsRoutes = new PatientsRoutes();
 app.use("/api/users", usersRoutes.router);
 app.use("/api/patients", patientsRoutes.router);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use("/*", express.static(path.join(__dirname, "public")));
-app.use((req, res, next) => {
-  res.sendFile(path.resolve(__dirname, "public", "index.html"));
-});
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+// app.use("/", express.static(path.join(__dirname, "public")));
+// app.use((req, res, next) => {
+//   res.sendFile(path.resolve(__dirname, "public", "index.html"));
+// });
 
 app.use((error, req, res, next) => {
   if (req.file) {
