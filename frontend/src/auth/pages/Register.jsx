@@ -32,6 +32,8 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(`${process.env.REACT_APP_SERVER_URL}api/users/register`);
+
     axios
       .post(
         `${process.env.REACT_APP_SERVER_URL}api/users/register`,

@@ -1,7 +1,8 @@
+import functions from "firebase-functions";
 import express from "express";
 import mongoose from "mongoose";
 import { currentDb } from "./config/db.js";
-import cors from "cors";
+// import cors from "cors";
 import { handleError } from "./lib/http-error.js";
 import fs from "fs";
 import path from "path";
@@ -23,11 +24,11 @@ app.use("/uploads/images", express.static(path.join("uploads", "images")));
 // app.use(express.static(path.join("public")));
 
 // set CORS headers on response from this API using the `cors` NPM package
-app.use(
-  cors({
-    origin: process.env.CLIENT_ORIGIN || `http://localhost:3000`,
-  })
-);
+// app.use(
+//   cors({
+//     origin: process.env.CLIENT_ORIGIN || `http://localhost:3000`,
+//   })
+// );
 
 // app.use(function (req, res, next) {
 //   res.setHeader(
@@ -47,12 +48,18 @@ const patientsRoutes = new PatientsRoutes();
 app.use("/api/users", usersRoutes.router);
 app.use("/api/patients", patientsRoutes.router);
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // app.use("/", express.static(path.join(__dirname, "public")));
+// app.use(express.static(path.join("public")));
 // app.use((req, res, next) => {
 //   res.sendFile(path.resolve(__dirname, "public", "index.html"));
 // });
+
+app.use(express.static(path.join(__dirname, "public")));
+app.get("/*", (req, res, next) => {
+  res.sendFile(path.resolve(__dirname, "public", "index.html"));
+});
 
 app.use((error, req, res, next) => {
   if (req.file) {
@@ -75,3 +82,5 @@ app.use(handleError);
 app.listen(port, () => {
   console.log("listening on port " + port);
 });
+
+export let fns = functions.https.onRequest(app);

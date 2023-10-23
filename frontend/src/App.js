@@ -39,7 +39,7 @@ const App = () => {
         <Route path="/patientdetail/:id" element={<PatientDetail />} />
         <Route path="logout" element={<Logout />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="*" element={<NotFound loggedIn={true} />} />
+        {/* <Route path="*" element={<NotFound loggedIn={true} />} /> */}
       </Routes>
     );
   } else {
@@ -49,7 +49,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="logout" element={<Logout />} />
         <Route path="/" element={<Home />} />
-        <Route path="*" element={<NotFound loggedIn={false} />} />
+        {/* <Route path="*" element={<NotFound loggedIn={false} />} /> */}
       </Routes>
     );
   }

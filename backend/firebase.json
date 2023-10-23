@@ -6,7 +6,11 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
+    "rewrites": [      
+      {
+        "source": "/api/**",
+        "function": "fns"
+      },
       {
         "source": "**",
         "destination": "/index.html"
@@ -15,5 +19,8 @@
   },
   "storage": {
     "rules": "storage.rules"
+  },
+  "functions":{
+    "runtime": "nodejs18"
   }
 }

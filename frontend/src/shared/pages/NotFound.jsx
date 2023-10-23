@@ -12,14 +12,14 @@ const NotFound = (props) => {
         <p>
           The page you are looking for is not available. Please{" "}
           <a
-            href={`${process.env.REACT_APP_URL}login`}
+            href={`${process.env.REACT_APP_SERVER_URL}login`}
             className="text-blue-600 font-bold"
           >
             LOGIN
           </a>{" "}
           or{" "}
           <a
-            href={`${process.env.REACT_APP_URL}register`}
+            href={`${process.env.REACT_APP_SERVER_URL}register`}
             className="text-blue-600 font-bold"
           >
             REGISTER

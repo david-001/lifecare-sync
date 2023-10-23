@@ -1,4 +1,7 @@
 import express from "express";
+// import PatientsController from "../../controllers/patients-controllers.js";
+// import checkAuth from "../../middleware/check-auth.js";
+// import fileUpload from "../../middleware/file-upload.js";
 import PatientsController from "../controllers/patients-controllers.js";
 import checkAuth from "../middleware/check-auth.js";
 import fileUpload from "../middleware/file-upload.js";

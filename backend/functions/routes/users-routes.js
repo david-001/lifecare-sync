@@ -1,4 +1,8 @@
 import express from "express";
+// import UsersController from "../../controllers/users-controllers.js";
+// import checkAuth from "../../middleware/check-auth.js";
+// import fileUpload from "../../middleware/file-upload.js";
+
 import UsersController from "../controllers/users-controllers.js";
 import checkAuth from "../middleware/check-auth.js";
 import fileUpload from "../middleware/file-upload.js";
