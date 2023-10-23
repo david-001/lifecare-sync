@@ -9,11 +9,6 @@ import { fileURLToPath } from "url";
 import UsersRoutes from "./routes/users-routes.js";
 import PatientsRoutes from "./routes/patients-routes.js";
 
-// establish database connection
-mongoose.connect(currentDb, {
-  useNewUrlParser: true,
-});
-
 // create express application object
 const app = express();
 
@@ -23,11 +18,11 @@ app.use("/uploads/images", express.static(path.join("uploads", "images")));
 // app.use(express.static(path.join("public")));
 
 // set CORS headers on response from this API using the `cors` NPM package
-app.use(
-  cors({
-    origin: process.env.CLIENT_ORIGIN || `http://localhost:3000`,
-  })
-);
+// app.use(
+//   cors({
+//     origin: process.env.CLIENT_ORIGIN || `http://localhost:3000`,
+//   })
+// );
 
 // app.use(function (req, res, next) {
 //   res.setHeader(
@@ -47,12 +42,12 @@ const patientsRoutes = new PatientsRoutes();
 app.use("/api/users", usersRoutes.router);
 app.use("/api/patients", patientsRoutes.router);
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-// app.use("/", express.static(path.join(__dirname, "public")));
-// app.use((req, res, next) => {
-//   res.sendFile(path.resolve(__dirname, "public", "index.html"));
-// });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/", express.static(path.join(__dirname, "public")));
+app.use((req, res, next) => {
+  res.sendFile(path.resolve(__dirname, "public", "index.html"));
+});
 
 app.use((error, req, res, next) => {
   if (req.file) {
@@ -72,6 +67,13 @@ app.set("port", port);
 
 app.use(handleError);
 
-app.listen(port, () => {
-  console.log("listening on port " + port);
-});
+// establish database connection
+mongoose.connect(
+  currentDb,
+  {
+    useNewUrlParser: true,
+  },
+  app.listen(port, () => {
+    console.log("listening on port " + port);
+  })
+);
