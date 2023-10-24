@@ -37,6 +37,8 @@ const Input = (props) => {
     element = (
       <input
         className="border border-gray-300 shadow w-full file:bg-blue-500 file:text-white file:font-bold file:py-2 file:px-4"
+        accept=".jpg,.png,.jpeg"
+        disabled={false}
         type={type}
         onChange={onChange}
       />

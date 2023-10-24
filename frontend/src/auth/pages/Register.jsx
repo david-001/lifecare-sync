@@ -117,7 +117,6 @@ const Register = () => {
           type="file"
           label="image"
           label_txt="Upload profile photo"
-          accept=".jpg,.png,.jpeg"
           onChange={handlePhotoUpload}
         />
         <Input
