@@ -23,7 +23,9 @@ const Home = () => {
         >
           REGISTER
         </a>{" "}
-        if you don't have an account.
+        if you don't have an account. <b>Note</b> This app is only a demo. Not
+        all features are unlocked. To unlock all features please send an email
+        to techdev500@gmail.com
       </p>
     </Container>
   );
