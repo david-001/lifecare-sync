@@ -2,11 +2,11 @@
   "name": "lifecare-sync",
   "version": "1.0.0",
   "description": "A tool designed for medical practitioners to observe and revise patient symptoms, medications, treatment, and other crucial particulars",
-  "main": "server.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "author": "David Akim",
   "license": "ISC",
