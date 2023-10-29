@@ -7,6 +7,7 @@ import {
 } from "pangea-node-sdk";
 import dotenv from "dotenv";
 dotenv.config();
+import { HttpError } from "../lib/http-error.js";
 
 const token = process.env.PANGEA_TOKEN;
 const config = new PangeaConfig({ domain: process.env.PANGEA_DOMAIN });
@@ -47,6 +48,14 @@ const pangeaRegister = async (
     );
     return createResp;
   } catch (err) {
+    if (err.response.status === "UserExists") {
+      const error = new HttpError(
+        "There is a already a user with this email. Please use a different email address.",
+        422
+      );
+      return next(error);
+    }
+
     return next(err);
   }
 };

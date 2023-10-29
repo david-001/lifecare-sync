@@ -67,7 +67,7 @@ const App = () => {
       <BrowserRouter>
         <Navbar />
         <main>
-          <div className="bg-gradient-to-br from-blue-500 to-blue-50 flex justify-center min-h-screen py-32 px-10">
+          <div className="hospital_bg flex justify-center min-h-screen py-32 px-10">
             <Suspense
               fallback={
                 <div className="flex justify-center items-center">

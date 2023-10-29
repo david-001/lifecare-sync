@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/auth-context";
-// import LoadingSpinner from "../../shared/components/LoadingSpinner";
-import { handleError } from "./toast";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Navbar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const auth = useContext(AuthContext);
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -29,12 +29,13 @@ const Navbar = () => {
           );
         })
         .catch((err) => {
-          handleError(err);
+          auth.logout();
+          navigate("/");
         });
     } else {
       setUser(null);
     }
-  }, [auth]);
+  }, [auth, navigate]);
 
   // if (!user) {
   //   return <LoadingSpinner />;

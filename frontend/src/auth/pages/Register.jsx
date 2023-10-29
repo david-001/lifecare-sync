@@ -7,9 +7,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import LoadingSpinner from "../../shared/components/LoadingSpinner";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState({
     first_name: "",
     last_name: "",
@@ -31,7 +33,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     axios
       .post(
         `${process.env.REACT_APP_SERVER_URL}api/users/register`,
@@ -49,11 +51,8 @@ const Register = () => {
         }, 2000);
       })
       .catch((err) => {
-        if (err.response.data.message) {
-          handleError(err.response.data.message);
-        } else {
-          handleError(err.response.data);
-        }
+        setLoading(false);
+        handleError(err.response.data.message);
       });
   };
 
@@ -75,6 +74,10 @@ const Register = () => {
       });
     }
   };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <Container>
@@ -109,17 +112,17 @@ const Register = () => {
           type="text"
           id="phone"
           name="phone"
-          placeholder="Phone"
+          placeholder="[Optional] Phone Number"
           value={phone}
           onChange={handleOnChange}
         />
-        <Input
+        {/* <Input
           type="file"
           label="image"
           label_txt="Upload profile photo"
           accept=".jpg,.png,.jpeg"
           onChange={handlePhotoUpload}
-        />
+        /> */}
         <Input
           label="email"
           label_txt="Email"

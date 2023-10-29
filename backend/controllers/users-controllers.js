@@ -6,6 +6,12 @@ import {
   pangeaUpdateProfile,
 } from "../lib/pangea.js";
 import { HttpError } from "../lib/http-error.js";
+import {
+  validateName,
+  validateEmail,
+  validatePassword,
+  validatePhone,
+} from "../lib/validation.js";
 import createUserDb, {
   getUserFromToken,
   setToken,
@@ -42,6 +48,15 @@ export default class UsersController {
         422
       );
       return next(error);
+    }
+
+    // Validation
+    validateName(first_name, next);
+    validateName(last_name, next);
+    validatePassword(password, next);
+    validateEmail(email, next);
+    if (phone) {
+      validatePhone(phone, next);
     }
 
     let createResp;
@@ -147,9 +162,16 @@ export default class UsersController {
 
     try {
       const user = await getUserFromToken(req.token, next);
+      if (!user) {
+        const error = new HttpError(
+          "Error retrieving user from database.",
+          422
+        );
+        return next(error);
+      }
       resp = await pangeaGetProfile(user.userId, next);
     } catch (err) {
-      next(err);
+      return next(err);
     }
 
     res
@@ -190,7 +212,7 @@ export default class UsersController {
         image,
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
 
     res.status(201).json({ response: "Successfully updated profile" });
