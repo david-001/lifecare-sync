@@ -33,6 +33,7 @@ MONGODB_USER= {YOUR MONGODB USER}
 MONGODB_PWD= {YOU MONGODB PASSWORD}
 ```
 
-8. Login to [Pangea](https://pangea.cloud/). Go to AuthN->Users to see all registered user. Go to Secure Audit Log-> View Logs to see all logged events.
-9. Navigate to the backend directory and run the command.
+8. In the backend directory, run the command.
    `node server.js`
+
+9. Login to [Pangea](https://pangea.cloud/). Go to AuthN->Users to see all registered user. Go to Secure Audit Log-> View Logs to see all logged events.
