@@ -62,7 +62,7 @@ const Navbar = () => {
       <ul className="font-medium flex flex-col bg-blue-600 md:flex-row md:space-x-8 ">
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}profile`}
+            href={`${process.env.REACT_APP_URL}profile`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Profile
@@ -70,7 +70,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}patients`}
+            href={`${process.env.REACT_APP_URL}patients`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Patients
@@ -78,7 +78,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}addpatient`}
+            href={`${process.env.REACT_APP_URL}addpatient`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Add Patient
@@ -86,7 +86,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}logout`}
+            href={`${process.env.REACT_APP_URL}logout`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Logout
@@ -99,7 +99,7 @@ const Navbar = () => {
       <ul className="font-medium flex flex-col bg-blue-600 md:flex-row md:space-x-8 ">
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}register`}
+            href={`${process.env.REACT_APP_URL}register`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Register
@@ -107,7 +107,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}login`}
+            href={`${process.env.REACT_APP_URL}login`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Login
