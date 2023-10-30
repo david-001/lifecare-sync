@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 // import Register from "./auth/pages/Register";
 // import Login from "./auth/pages/Login";
 // import Logout from "./auth/pages/Logout";
@@ -80,6 +82,7 @@ const App = () => {
           </div>
         </main>
       </BrowserRouter>
+      <ToastContainer />
     </AuthContext.Provider>
   );
 };

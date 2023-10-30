@@ -5,17 +5,16 @@ import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
 import handleSuccess, { handleError } from "../../shared/components/toast";
 import PatientForm from "../forms/PatientForm";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
+import LoadingSpinner from "../../shared/components/LoadingSpinner";
 
 const AddPatient = () => {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [patient, setPatient] = useState({
     first_name: "",
     last_name: "",
     age: "",
-    image: null,
     contact: "",
     emergency_contact: "",
     pre_existing_conditions: "",
@@ -28,7 +27,7 @@ const AddPatient = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     axios
       .post(
         `${process.env.REACT_APP_SERVER_URL}api/patients/new`,
@@ -47,6 +46,7 @@ const AddPatient = () => {
         }, 2000);
       })
       .catch((err) => {
+        setLoading(false);
         handleError(err.response.data.message);
       });
   };
@@ -59,16 +59,9 @@ const AddPatient = () => {
     });
   };
 
-  const handlePhotoUpload = (e) => {
-    let pickedFile;
-    if (e.target.files && e.target.files.length === 1) {
-      pickedFile = e.target.files[0];
-      setPatient({
-        ...patient,
-        image: pickedFile,
-      });
-    }
-  };
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <Container>
@@ -79,9 +72,7 @@ const AddPatient = () => {
         patient={patient}
         handleSubmit={handleSubmit}
         handleOnChange={handleOnChange}
-        handlePhotoUpload={handlePhotoUpload}
       />
-      <ToastContainer />
     </Container>
   );
 };

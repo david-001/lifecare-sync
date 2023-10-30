@@ -9,7 +9,7 @@ const handleSuccess = (msg) => {
 const handleError = (err) =>
   toast.error(err, {
     position: toast.POSITION.TOP_RIGHT,
-    autoClose: 30000,
+    autoClose: 3000,
   });
 
 export { handleError };

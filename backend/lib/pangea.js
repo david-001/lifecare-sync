@@ -7,7 +7,6 @@ import {
 } from "pangea-node-sdk";
 import dotenv from "dotenv";
 dotenv.config();
-import { HttpError } from "../lib/http-error.js";
 
 const token = process.env.PANGEA_TOKEN;
 const config = new PangeaConfig({ domain: process.env.PANGEA_DOMAIN });
@@ -28,102 +27,68 @@ const pangeaRegister = async (
   phone,
   image,
   email,
-  password,
-  next
+  password
 ) => {
-  try {
-    const createResp = await authn.user.create(
-      email,
-      password,
-      AuthN.IDProvider.PASSWORD,
-      {
-        profile: {
-          first_name: first_name,
-          last_name: last_name,
-          phone: phone,
-          image: image,
-          role: "doctor",
-        },
-      }
-    );
-    return createResp;
-  } catch (err) {
-    if (err.response.status === "UserExists") {
-      const error = new HttpError(
-        "There is a already a user with this email. Please use a different email address.",
-        422
-      );
-      return next(error);
+  const createResp = await authn.user.create(
+    email,
+    password,
+    AuthN.IDProvider.PASSWORD,
+    {
+      profile: {
+        first_name: first_name,
+        last_name: last_name,
+        phone: phone,
+        image: image,
+        role: "doctor",
+      },
     }
-
-    return next(err);
-  }
+  );
+  return createResp;
 };
 
-const pangeaLogin = async (email, password, next) => {
-  try {
-    const loginResp = await authn.user.login.password(email, password);
-    return loginResp;
-  } catch (err) {
-    return next(err);
-  }
+const pangeaLogin = async (email, password) => {
+  const loginResp = await authn.user.login.password(email, password);
+  return loginResp;
 };
 
 const pangeaUpdatePassword = async (
   token,
   password_initial,
-  password_update,
-  next
+  password_update
 ) => {
-  try {
-    const passUpdateResp = await authn.client.password.change(
-      token,
-      password_initial,
-      password_update
-    );
-    return passUpdateResp;
-  } catch (err) {
-    return next(err);
-  }
+  const passUpdateResp = await authn.client.password.change(
+    token,
+    password_initial,
+    password_update
+  );
+  return passUpdateResp;
 };
 
-const pangeaGetProfile = async (userId, next) => {
-  try {
-    const resp = await authn.user.profile.getProfile({ id: userId });
-    return resp;
-  } catch (err) {
-    return next(err);
-  }
+const pangeaGetProfile = async (userId) => {
+  const resp = await authn.user.profile.getProfile({ id: userId });
+  return resp;
 };
 
 const pangeaUpdateProfile = async (email, profile) => {
-  try {
-    const resp = await authn.user.profile.update({
-      email: email,
-      profile: profile,
-    });
-    return resp;
-  } catch (err) {
-    return next(err);
-  }
+  const resp = await authn.user.profile.update({
+    email: email,
+    profile: profile,
+  });
+  return resp;
 };
 
-const pangeaAudit = async (actor, action, status, message, req, next) => {
-  try {
-    await audit.log(
-      {
-        actor: actor,
-        action: action,
-        status: status,
-        target: `${hostIpAddress(req)}`,
-        source: `${clientIpAddress(req)}`,
-        message: message,
-      },
-      { verbose: true }
-    );
-  } catch (err) {
-    return next(err);
-  }
+const pangeaAudit = async (actor, action, status, message, req) => {
+  await audit.log(
+    {
+      actor: actor,
+      action: action,
+      status: status,
+      target: `${hostIpAddress(req)}`,
+      source: `${clientIpAddress(req)}`,
+      message: message,
+    },
+    { verbose: true }
+  );
 };
 
 export {

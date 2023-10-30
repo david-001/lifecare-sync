@@ -9,8 +9,6 @@ import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import Button from "../../shared/components/Button";
 import UpdatePatientModal from "../components/UpdatePatientModal";
 import DeletePatientModal from "../components/DeletePatientModal";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 
 const PatientDetail = () => {
   const auth = useContext(AuthContext);
@@ -154,7 +152,6 @@ const PatientDetail = () => {
             Delete
           </Button>
         </div>
-        <ToastContainer />
       </div>
 
       <div>

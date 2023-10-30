@@ -5,8 +5,6 @@ import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
 import Button from "../../shared/components/Button";
 import handleSuccess, { handleError } from "../../shared/components/toast";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 
 const DeletePatientModal = (props) => {
   const { show, handleClose, triggerRefresh } = props;
@@ -78,7 +76,6 @@ const DeletePatientModal = (props) => {
                     Delete
                   </Button>
                 </div>
-                <ToastContainer />
               </div>
             </div>
           </div>

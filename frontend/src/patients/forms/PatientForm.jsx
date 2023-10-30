@@ -2,7 +2,7 @@ import Input from "../../shared/components/Input";
 import Button from "../../shared/components/Button";
 
 const PatientForm = (props) => {
-  const { patient, handleSubmit, handleOnChange, handlePhotoUpload } = props;
+  const { patient, handleSubmit, handleOnChange } = props;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -36,13 +36,6 @@ const PatientForm = (props) => {
         value={patient.age}
         onChange={handleOnChange}
       />
-      {/* <Input
-        type="file"
-        label="image"
-        label_txt="Upload profile photo"
-        accept=".jpg,.png,.jpeg"
-        onChange={handlePhotoUpload}
-      /> */}
       <Input
         label="contact"
         label_txt="Contact Tel."

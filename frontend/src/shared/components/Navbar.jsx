@@ -118,7 +118,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-blue-600 py-2 px-6 fixed w-full top-0 left-0">
+    <nav className="bg-blue-600 py-2 px-6 fixed w-full top-0 left-0 z-10">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <div className="flex flex-wrap items-center justify-between">
           <svg

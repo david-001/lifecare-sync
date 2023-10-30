@@ -10,13 +10,13 @@ import {
   validateName,
   validateEmail,
   validatePassword,
-  validatePhone,
 } from "../lib/validation.js";
 import createUserDb, {
   getUserFromToken,
   setToken,
 } from "../db/db-operations.js";
 import fs from "fs";
+import { isValidNumber } from "libphonenumber-js";
 
 export default class UsersController {
   constructor() {}
@@ -35,7 +35,7 @@ export default class UsersController {
     let image;
     req.file ? (image = req.file.path) : (image = "");
 
-    // Check if user entered inputs correctly
+    // Check if all fields are filled out and passwords match
     if (
       !first_name ||
       !last_name ||
@@ -51,12 +51,51 @@ export default class UsersController {
     }
 
     // Validation
-    validateName(first_name, next);
-    validateName(last_name, next);
-    validatePassword(password, next);
-    validateEmail(email, next);
+    if (!validateName(first_name)) {
+      const error = new HttpError(
+        "Please ensure that the First Name field contains only letters.",
+        422
+      );
+      return next(error);
+    }
+    if (!validateName(last_name)) {
+      const error = new HttpError(
+        "Please ensure that the Last Name field contains only letters.",
+        422
+      );
+      return next(error);
+    }
+
     if (phone) {
-      validatePhone(phone, next);
+      if (!isValidNumber(phone)) {
+        const error = new HttpError(
+          "Please ensure that the phone number is valid. Example +12133734253 or +1 213 373 4253",
+          422
+        );
+        return next(error);
+      }
+    }
+
+    if (!validateEmail(email)) {
+      const error = new HttpError(
+        "Please ensure that the email is valid. Example example@email.com",
+        422
+      );
+      return next(error);
+    }
+
+    if (!validatePassword(password)) {
+      const error = new HttpError(
+        `
+          Please ensure that your password contains:
+          At least one digit (0-9).
+          At least one lowercase letter (a-z).
+          At least one uppercase letter (A-Z).
+          At least one of the specified special characters (@, #, $, %, ^, &, +, =, !).
+          A minimum length of 8 characters`,
+        422
+      );
+      return next(error);
     }
 
     let createResp;
@@ -68,17 +107,21 @@ export default class UsersController {
         phone,
         image,
         email,
-        password,
-        next
+        password
       );
 
       // Create user in database
-      await createUserDb(createResp.result.id, next);
+      await createUserDb(createResp.result.id);
     } catch (err) {
-      const error = new HttpError(
-        "Something went wrong, could not register.",
-        500
-      );
+      let error;
+      if (err.response.status === "UserExists") {
+        error = new HttpError(
+          "There is a already a user with this email. Please use a different email address.",
+          422
+        );
+      } else {
+        error = new HttpError("Something went wrong, could not register.", 500);
+      }
       return next(error);
     }
 
@@ -137,23 +180,35 @@ export default class UsersController {
   // Update password
   updatePassword = async (req, res, next) => {
     const { password_initial, password_update } = req.body;
+    if (!validatePassword(password_update)) {
+      const error = new HttpError(
+        `
+          Please ensure that your password contains:
+          At least one digit (0-9).
+          At least one lowercase letter (a-z).
+          At least one uppercase letter (A-Z).
+          At least one of the specified special characters (@, #, $, %, ^, &, +, =, !).
+          A minimum length of 8 characters`,
+        422
+      );
+      return next(error);
+    }
+
     let passUpdateResp;
     try {
       passUpdateResp = await pangeaUpdatePassword(
         req.token,
         password_initial,
-        password_update,
-        next
+        password_update
       );
     } catch (err) {
       const error = new HttpError(
-        "Something went wrong, could not update password.",
+        "Something went wrong, could not update password. Your initial password is incorrect.",
         500
       );
       return next(error);
     }
-
-    res.status(201).json({ result: passUpdateResp.result });
+    res.status(201).json({ result: passUpdateResp.summary });
   };
 
   // Get profile
@@ -161,7 +216,7 @@ export default class UsersController {
     let resp;
 
     try {
-      const user = await getUserFromToken(req.token, next);
+      const user = await getUserFromToken(req.token);
       if (!user) {
         const error = new HttpError(
           "Error retrieving user from database.",
@@ -169,7 +224,7 @@ export default class UsersController {
         );
         return next(error);
       }
-      resp = await pangeaGetProfile(user.userId, next);
+      resp = await pangeaGetProfile(user.userId);
     } catch (err) {
       return next(err);
     }
@@ -191,6 +246,32 @@ export default class UsersController {
         422
       );
       return next(error);
+    }
+
+    // Validation
+    if (!validateName(first_name)) {
+      const error = new HttpError(
+        "Please ensure that the First Name field contains only letters.",
+        422
+      );
+      return next(error);
+    }
+    if (!validateName(last_name)) {
+      const error = new HttpError(
+        "Please ensure that the Last Name field contains only letters.",
+        422
+      );
+      return next(error);
+    }
+
+    if (phone) {
+      if (!isValidNumber(phone)) {
+        const error = new HttpError(
+          "Please ensure that the phone number is valid. Example +12133734253 or +1 213 373 4253",
+          422
+        );
+        return next(error);
+      }
     }
 
     // Delete old image

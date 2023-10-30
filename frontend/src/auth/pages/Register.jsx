@@ -5,8 +5,6 @@ import Button from "../../shared/components/Button";
 import handleSuccess, { handleError } from "../../shared/components/toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import LoadingSpinner from "../../shared/components/LoadingSpinner";
 
 const Register = () => {
@@ -16,7 +14,6 @@ const Register = () => {
     first_name: "",
     last_name: "",
     phone: "",
-    image: null,
     email: "",
     password: "",
     password_confirmation: "",
@@ -64,17 +61,6 @@ const Register = () => {
     });
   };
 
-  const handlePhotoUpload = (e) => {
-    let pickedFile;
-    if (e.target.files && e.target.files.length === 1) {
-      pickedFile = e.target.files[0];
-      setInputValue({
-        ...inputValue,
-        image: pickedFile,
-      });
-    }
-  };
-
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -116,13 +102,6 @@ const Register = () => {
           value={phone}
           onChange={handleOnChange}
         />
-        {/* <Input
-          type="file"
-          label="image"
-          label_txt="Upload profile photo"
-          accept=".jpg,.png,.jpeg"
-          onChange={handlePhotoUpload}
-        /> */}
         <Input
           label="email"
           label_txt="Email"
@@ -158,7 +137,6 @@ const Register = () => {
           Register
         </Button>
       </form>
-      <ToastContainer />
     </Container>
   );
 };
