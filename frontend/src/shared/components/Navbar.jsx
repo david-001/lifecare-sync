@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/auth-context";
-// import LoadingSpinner from "../../shared/components/LoadingSpinner";
-import { handleError } from "./toast";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Navbar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const auth = useContext(AuthContext);
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -29,12 +29,13 @@ const Navbar = () => {
           );
         })
         .catch((err) => {
-          handleError(err);
+          auth.logout();
+          navigate("/");
         });
     } else {
       setUser(null);
     }
-  }, [auth]);
+  }, [auth, navigate]);
 
   // if (!user) {
   //   return <LoadingSpinner />;
@@ -61,7 +62,7 @@ const Navbar = () => {
       <ul className="font-medium flex flex-col bg-blue-600 md:flex-row md:space-x-8 ">
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}profile`}
+            href={`${process.env.REACT_APP_URL}profile`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Profile
@@ -69,7 +70,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}patients`}
+            href={`${process.env.REACT_APP_URL}patients`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Patients
@@ -77,7 +78,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}addpatient`}
+            href={`${process.env.REACT_APP_URL}addpatient`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Add Patient
@@ -85,7 +86,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}logout`}
+            href={`${process.env.REACT_APP_URL}logout`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Logout
@@ -98,7 +99,7 @@ const Navbar = () => {
       <ul className="font-medium flex flex-col bg-blue-600 md:flex-row md:space-x-8 ">
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}register`}
+            href={`${process.env.REACT_APP_URL}register`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Register
@@ -106,7 +107,7 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href={`${process.env.REACT_APP_SERVER_URL}login`}
+            href={`${process.env.REACT_APP_URL}login`}
             className="block py-2 pl-3 pr-4 text-white rounded hover:text-blue-300 md:border-0 md:p-0"
           >
             Login
@@ -117,7 +118,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-blue-600 py-2 px-6 fixed w-full top-0 left-0">
+    <nav className="bg-blue-600 py-2 px-6 fixed w-full top-0 left-0 z-10">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <div className="flex flex-wrap items-center justify-between">
           <svg

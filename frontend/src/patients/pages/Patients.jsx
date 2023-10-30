@@ -7,8 +7,6 @@ import Card from "../../shared/components/Card";
 import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import profile_photo from "../../imgs/profile_photo.jpeg";
 import Input from "../../shared/components/Input";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 
 const Patients = () => {
   const auth = useContext(AuthContext);
@@ -98,7 +96,6 @@ const Patients = () => {
         </div>
       </div>
       <div className="w-full flex flex-wrap justify-center">{patientCards}</div>
-      <ToastContainer />
     </div>
   );
 };

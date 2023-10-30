@@ -4,8 +4,6 @@ import Button from "../../shared/components/Button";
 import handleSuccess, { handleError } from "../../shared/components/toast";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 
 const UpdateProfileModal = (props) => {
   const { show, handleClose, triggerRefresh } = props;
@@ -33,7 +31,8 @@ const UpdateProfileModal = (props) => {
       })
       .then(() => triggerRefresh())
       .catch((err) => {
-        handleError(err);
+        console.log("err");
+        handleError(err.response.data.message);
       });
   };
 
@@ -43,17 +42,6 @@ const UpdateProfileModal = (props) => {
       ...profile,
       [name]: value,
     });
-  };
-
-  const handlePhotoUpload = (e) => {
-    let pickedFile;
-    if (e.target.files && e.target.files.length === 1) {
-      pickedFile = e.target.files[0];
-      setProfile({
-        ...profile,
-        image: pickedFile,
-      });
-    }
   };
 
   return (
@@ -121,6 +109,7 @@ const UpdateProfileModal = (props) => {
                   value={phone}
                   onChange={handleOnProfChange}
                 />
+<<<<<<< HEAD
                 <Input
                   type="file"
                   label="image"
@@ -128,12 +117,13 @@ const UpdateProfileModal = (props) => {
                   onChange={handlePhotoUpload}
                 />
 
+=======
+>>>>>>> master
                 <br />
                 <Button variant="primary" type="submit">
                   Update Profile
                 </Button>
               </form>
-              <ToastContainer />
             </div>
           </div>
         </div>

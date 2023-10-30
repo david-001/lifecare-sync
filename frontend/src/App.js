@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 // import Register from "./auth/pages/Register";
 // import Login from "./auth/pages/Login";
 // import Logout from "./auth/pages/Logout";
@@ -67,7 +69,7 @@ const App = () => {
       <BrowserRouter>
         <Navbar />
         <main>
-          <div className="bg-gradient-to-br from-blue-500 to-blue-50 flex justify-center min-h-screen py-32 px-10">
+          <div className="hospital_bg flex justify-center min-h-screen py-32 px-10">
             <Suspense
               fallback={
                 <div className="flex justify-center items-center">
@@ -80,6 +82,7 @@ const App = () => {
           </div>
         </main>
       </BrowserRouter>
+      <ToastContainer />
     </AuthContext.Provider>
   );
 };

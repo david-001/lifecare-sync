@@ -1,6 +1,5 @@
 import { HttpError } from "../lib/http-error.js";
 import {
-  getUserDb,
   getPatientsByUserIdDb,
   getPatientDb,
   createPatientDb,
@@ -8,8 +7,10 @@ import {
   deletePatientDb,
   getUserFromToken,
 } from "../db/db-operations.js";
+import { validateName } from "../lib/validation.js";
 import { pangeaAudit } from "../lib/pangea.js";
 import fs from "fs";
+import { isValidNumber } from "libphonenumber-js";
 
 export default class PatientsController {
   constructor() {}
@@ -21,8 +22,8 @@ export default class PatientsController {
     let user;
 
     try {
-      user = await getUserFromToken(req.token, next);
-      patient = await getPatientDb(patientId, next);
+      user = await getUserFromToken(req.token);
+      patient = await getPatientDb(patientId);
 
       // Audit
       await pangeaAudit(
@@ -30,11 +31,10 @@ export default class PatientsController {
         "Accessed Patient Records",
         "Success",
         `${user.email} accessed ${patient.first_name} ${patient.last_name} records`,
-        req,
-        next
+        req
       );
     } catch (err) {
-      next(err);
+      return next(err);
     }
 
     res.status(201).json({ patient: patient });
@@ -47,8 +47,8 @@ export default class PatientsController {
     let user_patients;
 
     try {
-      user = await getUserFromToken(req.token, next);
-      user_patients = await getPatientsByUserIdDb(user.userId, next);
+      user = await getUserFromToken(req.token);
+      user_patients = await getPatientsByUserIdDb(user.userId);
 
       // Audit
       await pangeaAudit(
@@ -56,11 +56,10 @@ export default class PatientsController {
         "Accessed Patient Records",
         "Success",
         `${user.email} accessed ${user.patients.length} patient records`,
-        req,
-        next
+        req
       );
     } catch (err) {
-      next(err);
+      return next(err);
     }
 
     res.status(201).json({
@@ -84,11 +83,6 @@ export default class PatientsController {
       comments,
     } = req.body;
 
-    // const userId = req.params.userId;
-    if (!req) {
-      return next(new HttpError("Request Error", 422));
-    }
-
     let image;
     req.file ? (image = req.file.path) : (image = null);
 
@@ -101,10 +95,46 @@ export default class PatientsController {
       );
     }
 
+    // Validation
+    if (!validateName(first_name)) {
+      const error = new HttpError(
+        "Please ensure that the First Name field contains only letters.",
+        422
+      );
+      return next(error);
+    }
+    if (!validateName(last_name)) {
+      const error = new HttpError(
+        "Please ensure that the Last Name field contains only letters.",
+        422
+      );
+      return next(error);
+    }
+
+    if (contact) {
+      if (!isValidNumber(contact)) {
+        const error = new HttpError(
+          "Please ensure that the Contact Tel. is valid. Example +12133734253 or +1 213 373 4253",
+          422
+        );
+        return next(error);
+      }
+    }
+
+    if (emergency_contact) {
+      if (!isValidNumber(emergency_contact)) {
+        const error = new HttpError(
+          "Please ensure that the Emergency Contact Tel. is valid. Example +12133734253 or +1 213 373 4253",
+          422
+        );
+        return next(error);
+      }
+    }
+
     // Db operations
     let user;
     try {
-      user = await getUserFromToken(req.token, next);
+      user = await getUserFromToken(req.token);
       await createPatientDb(
         first_name,
         last_name,
@@ -118,8 +148,7 @@ export default class PatientsController {
         treatment,
         medication,
         comments,
-        user,
-        next
+        user
       );
 
       // Audit
@@ -128,11 +157,10 @@ export default class PatientsController {
         `New Patient ${first_name} ${last_name} Created`,
         "Success",
         `${user.email} created new patient record.`,
-        req,
-        next
+        req
       );
     } catch (err) {
-      next(err);
+      return next(err);
     }
 
     res.status(201).json({ response: "Successfully created patient." });
@@ -163,6 +191,42 @@ export default class PatientsController {
       );
     }
 
+    // Validation
+    if (!validateName(first_name)) {
+      const error = new HttpError(
+        "Please ensure that the First Name field contains only letters.",
+        422
+      );
+      return next(error);
+    }
+    if (!validateName(last_name)) {
+      const error = new HttpError(
+        "Please ensure that the Last Name field contains only letters.",
+        422
+      );
+      return next(error);
+    }
+
+    if (contact) {
+      if (!isValidNumber(contact)) {
+        const error = new HttpError(
+          "Please ensure that the Contact Tel. is valid. Example +12133734253 or +1 213 373 4253",
+          422
+        );
+        return next(error);
+      }
+    }
+
+    if (emergency_contact) {
+      if (!isValidNumber(emergency_contact)) {
+        const error = new HttpError(
+          "Please ensure that the Emergency Contact Tel. is valid. Example +12133734253 or +1 213 373 4253",
+          422
+        );
+        return next(error);
+      }
+    }
+
     const patientId = req.params.pid;
     let image;
     req.file ? (image = req.file.path) : (image = null);
@@ -172,8 +236,8 @@ export default class PatientsController {
     let patient;
 
     try {
-      user = await getUserFromToken(req.token, next);
-      patient = await getPatientDb(patientId, next);
+      user = await getUserFromToken(req.token);
+      patient = await getPatientDb(patientId);
 
       // Audit
       await pangeaAudit(
@@ -181,11 +245,10 @@ export default class PatientsController {
         `Updated Patient record ${first_name} ${last_name}`,
         "Success",
         `${user.email} updated patient record.`,
-        req,
-        next
+        req
       );
     } catch (err) {
-      next(err);
+      return next(err);
     }
 
     // Delete old image
@@ -216,7 +279,7 @@ export default class PatientsController {
         patient
       );
     } catch (err) {
-      next(err);
+      return next(err);
     }
 
     res.status(201).json({ response: "Successfully updated patient." });
@@ -231,9 +294,9 @@ export default class PatientsController {
     let user;
 
     try {
-      patient = await getPatientDb(patientId, next);
-      user = await getUserFromToken(req.token, next);
-      await deletePatientDb(patient, next);
+      patient = await getPatientDb(patientId);
+      user = await getUserFromToken(req.token);
+      await deletePatientDb(patient);
 
       // Audit
       await pangeaAudit(
@@ -241,17 +304,11 @@ export default class PatientsController {
         `Deleted Patient record ${patient.first_name} ${patient.last_name}`,
         "Success",
         `${user.email} deleted new patient record.`,
-        req,
-        next
+        req
       );
     } catch (err) {
-      next(err);
+      return next(err);
     }
-
-    // if (!patient) {
-    //   const error = new HttpError("Could not find patient for this id.", 404);
-    //   return next(error);
-    // }
 
     if (patient.image) {
       fs.unlink(patient.image, (err) => {

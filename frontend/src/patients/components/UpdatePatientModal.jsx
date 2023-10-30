@@ -4,8 +4,6 @@ import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
 import handleSuccess, { handleError } from "../../shared/components/toast";
 import PatientForm from "../forms/PatientForm";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 
 const UpdatePatientModal = (props) => {
   const { show, handleClose, triggerRefresh } = props;
@@ -43,17 +41,6 @@ const UpdatePatientModal = (props) => {
       ...patient,
       [name]: value,
     });
-  };
-
-  const handlePhotoUpload = (e) => {
-    let pickedFile;
-    if (e.target.files && e.target.files.length === 1) {
-      pickedFile = e.target.files[0];
-      setPatient({
-        ...patient,
-        image: pickedFile,
-      });
-    }
   };
 
   return (
@@ -95,10 +82,8 @@ const UpdatePatientModal = (props) => {
                 patient={patient}
                 handleSubmit={handleSubmit}
                 handleOnChange={handleOnChange}
-                handlePhotoUpload={handlePhotoUpload}
               />
             </div>
-            <ToastContainer />
           </div>
         </div>
       ) : (

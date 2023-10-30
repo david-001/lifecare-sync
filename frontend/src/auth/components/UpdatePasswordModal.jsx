@@ -4,8 +4,6 @@ import Button from "../../shared/components/Button";
 import handleSuccess, { handleError } from "../../shared/components/toast";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 
 const UpdatePasswordModal = (props) => {
   const { show, handleClose, triggerRefresh } = props;
@@ -31,13 +29,12 @@ const UpdatePasswordModal = (props) => {
         }
       )
       .then((resp) => {
-        console.log(resp);
-        handleSuccess(resp.data.response);
+        handleSuccess(resp.data.result);
         handleClose();
       })
       .then(() => triggerRefresh())
       .catch((err) => {
-        handleError(err);
+        handleError(err.response.data.message);
       });
   };
 
@@ -107,7 +104,6 @@ const UpdatePasswordModal = (props) => {
                   Update Password
                 </Button>
               </form>
-              <ToastContainer />
             </div>
           </div>
         </div>

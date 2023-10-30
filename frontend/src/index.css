@@ -2,3 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.hospital_bg{
+  background-image: url('imgs/background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center center;  
+}

@@ -10,7 +10,7 @@ const Card = (props) => {
         <img className="w-60 h-60" src={imgsrc} alt={imgalt} />
       </div>
       <div className="w-full h-9 absolute bottom-0 text-center">
-        <Link className="text-white" to={link}>
+        <Link className="text-white hover:text-blue-300" to={link}>
           View
         </Link>
       </div>
