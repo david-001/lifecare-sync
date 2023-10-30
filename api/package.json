@@ -1,0 +1,28 @@
+{
+  "name": "lifecare-sync",
+  "version": "1.0.0",
+  "description": "A tool designed for medical practitioners to observe and revise patient symptoms, medications, treatment, and other crucial particulars",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "David Akim",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "fs": "0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "libphonenumber-js": "^1.10.49",
+    "mongodb": "^5.8.0",
+    "mongoose": "^7.4.3",
+    "multer": "^1.4.5-lts.1",
+    "pangea-node-sdk": "^2.0.0",
+    "path": "^0.12.7",
+    "uuid": "^9.0.1"
+  }
+}

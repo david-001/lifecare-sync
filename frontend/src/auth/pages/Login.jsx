@@ -29,7 +29,6 @@ const Login = () => {
         navigate("/patients");
       })
       .catch((err) => {
-        console.log(err);
         if (err.response.data.message) {
           handleError(err.response.data.message);
         } else {

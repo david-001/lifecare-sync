@@ -105,7 +105,6 @@ const Profile = () => {
           variant="danger"
           onClick={() => {
             setUpdatePasswordModal(true);
-            console.log("password");
           }}
         >
           Update Password
