@@ -103,15 +103,6 @@ const Register = () => {
           onChange={handleOnChange}
         />
         <Input
-<<<<<<< HEAD
-          type="file"
-          label="image"
-          label_txt="Upload profile photo"
-          onChange={handlePhotoUpload}
-        />
-        <Input
-=======
->>>>>>> master
           label="email"
           label_txt="Email"
           type="email"

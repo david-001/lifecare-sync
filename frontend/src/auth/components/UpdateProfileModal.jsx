@@ -109,16 +109,6 @@ const UpdateProfileModal = (props) => {
                   value={phone}
                   onChange={handleOnProfChange}
                 />
-<<<<<<< HEAD
-                <Input
-                  type="file"
-                  label="image"
-                  label_txt="Upload profile photo"
-                  onChange={handlePhotoUpload}
-                />
-
-=======
->>>>>>> master
                 <br />
                 <Button variant="primary" type="submit">
                   Update Profile

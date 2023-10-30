@@ -27,94 +27,68 @@ const pangeaRegister = async (
   phone,
   image,
   email,
-  password,
-  next
+  password
 ) => {
-  try {
-    const createResp = await authn.user.create(
-      email,
-      password,
-      AuthN.IDProvider.PASSWORD,
-      {
-        profile: {
-          first_name: first_name,
-          last_name: last_name,
-          phone: phone,
-          image: image,
-          role: "doctor",
-        },
-      }
-    );
-    return createResp;
-  } catch (err) {
-    return next(err);
-  }
+  const createResp = await authn.user.create(
+    email,
+    password,
+    AuthN.IDProvider.PASSWORD,
+    {
+      profile: {
+        first_name: first_name,
+        last_name: last_name,
+        phone: phone,
+        image: image,
+        role: "doctor",
+      },
+    }
+  );
+  return createResp;
 };
 
-const pangeaLogin = async (email, password, next) => {
-  try {
-    const loginResp = await authn.user.login.password(email, password);
-    return loginResp;
-  } catch (err) {
-    return next(err);
-  }
+const pangeaLogin = async (email, password) => {
+  const loginResp = await authn.user.login.password(email, password);
+  return loginResp;
 };
 
 const pangeaUpdatePassword = async (
   token,
   password_initial,
-  password_update,
-  next
+  password_update
 ) => {
-  try {
-    const passUpdateResp = await authn.client.password.change(
-      token,
-      password_initial,
-      password_update
-    );
-    return passUpdateResp;
-  } catch (err) {
-    return next(err);
-  }
+  const passUpdateResp = await authn.client.password.change(
+    token,
+    password_initial,
+    password_update
+  );
+  return passUpdateResp;
 };
 
-const pangeaGetProfile = async (userId, next) => {
-  try {
-    const resp = await authn.user.profile.getProfile({ id: userId });
-    return resp;
-  } catch (err) {
-    return next(err);
-  }
+const pangeaGetProfile = async (userId) => {
+  const resp = await authn.user.profile.getProfile({ id: userId });
+  return resp;
 };
 
 const pangeaUpdateProfile = async (email, profile) => {
-  try {
-    const resp = await authn.user.profile.update({
-      email: email,
-      profile: profile,
-    });
-    return resp;
-  } catch (err) {
-    return next(err);
-  }
+  const resp = await authn.user.profile.update({
+    email: email,
+    profile: profile,
+  });
+  return resp;
 };
 
-const pangeaAudit = async (actor, action, status, message, req, next) => {
-  try {
-    await audit.log(
-      {
-        actor: actor,
-        action: action,
-        status: status,
-        target: `${hostIpAddress(req)}`,
-        source: `${clientIpAddress(req)}`,
-        message: message,
-      },
-      { verbose: true }
-    );
-  } catch (err) {
-    return next(err);
-  }
+const pangeaAudit = async (actor, action, status, message, req) => {
+  await audit.log(
+    {
+      actor: actor,
+      action: action,
+      status: status,
+      target: `${hostIpAddress(req)}`,
+      source: `${clientIpAddress(req)}`,
+      message: message,
+    },
+    { verbose: true }
+  );
 };
 
 export {

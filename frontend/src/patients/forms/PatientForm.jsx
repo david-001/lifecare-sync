@@ -37,15 +37,6 @@ const PatientForm = (props) => {
         onChange={handleOnChange}
       />
       <Input
-<<<<<<< HEAD
-        type="file"
-        label="image"
-        label_txt="Upload profile photo"
-        onChange={handlePhotoUpload}
-      />
-      <Input
-=======
->>>>>>> master
         label="contact"
         label_txt="Contact Tel."
         type="text"
