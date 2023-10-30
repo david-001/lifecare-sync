@@ -2,7 +2,7 @@
 
 ## Requirements
 
-1. This app requires the security services from Pangea. Create an account at [Pangea](https://login.aws.us.pangea.cloud/authorize?redirect_uri=https%3A%2F%2Fconsole.pangea.cloud&state=6xpa7trXAvBQa5vxirTooogabcf2sk5x)
+1. This app requires the security services from Pangea. Create an account at [Pangea](https://pangea.cloud/) at enable your API.
 
 2. This app requires MongoDB. Create an account at [MongoDB](https://www.mongodb.com/)
 
@@ -32,3 +32,8 @@ PANGEA_DOMAIN= {YOUR DOMAIN}
 MONGODB_USER= {YOUR MONGODB USER}
 MONGODB_PWD= {YOU MONGODB PASSWORD}
 ```
+
+8. In the backend directory, run the command.
+   `node server.js`
+
+9. Login to [Pangea](https://pangea.cloud/). Go to AuthN->Users to see all registered user. Go to Secure Audit Log-> View Logs to see all logged events.

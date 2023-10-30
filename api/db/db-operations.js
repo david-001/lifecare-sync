@@ -3,63 +3,35 @@ import { Patient } from "../models/patient.js";
 import mongoose from "mongoose";
 import { HttpError } from "../lib/http-error.js";
 
-const createUserDb = async (id, next) => {
+const createUserDb = async (id) => {
   // Create user in database
-  try {
-    const createdUser = new User({
-      userId: id,
-    });
-    await createdUser.save();
-  } catch (err) {
-    return next(err);
-  }
+  const createdUser = new User({
+    userId: id,
+  });
+  await createdUser.save();
 };
 
-const getUserFromToken = async (token, next) => {
-  try {
-    return await User.findOne({ token: token });
-  } catch (err) {
-    return next(err);
-  }
+const getUserFromToken = async (token) => {
+  return await User.findOne({ token: token });
 };
 
-const setToken = async (userId, token, next) => {
+const setToken = async (userId, token) => {
   let user;
-  try {
-    user = await getUserDb(userId, next);
-    user.token = token;
-    await user.save();
-  } catch (err) {
-    return next(err);
-  }
+  user = await getUserDb(userId);
+  user.token = token;
+  await user.save();
 };
 
-const getUserDb = async (userId, next) => {
-  try {
-    return await User.findOne({ userId: userId });
-  } catch (err) {
-    return next(err);
-  }
+const getUserDb = async (userId) => {
+  return await User.findOne({ userId: userId });
 };
 
-const getPatientDb = async (patientId, next) => {
-  try {
-    return await Patient.findById(patientId).populate("owner");
-  } catch (err) {
-    const error = new HttpError(
-      "Something went wrong, could not find patient.",
-      500
-    );
-    return next(error);
-  }
+const getPatientDb = async (patientId) => {
+  return await Patient.findById(patientId).populate("owner");
 };
 
-const getPatientsByUserIdDb = async (userId, next) => {
-  try {
-    return await User.findOne({ userId: userId }).populate("patients");
-  } catch (err) {
-    return next(err);
-  }
+const getPatientsByUserIdDb = async (userId) => {
+  return await User.findOne({ userId: userId }).populate("patients");
 };
 
 const createPatientDb = async (
@@ -75,8 +47,7 @@ const createPatientDb = async (
   treatment,
   medication,
   comments,
-  user,
-  next
+  user
 ) => {
   const createdPatient = new Patient({
     first_name,
@@ -94,20 +65,12 @@ const createPatientDb = async (
     owner: user._id,
   });
 
-  try {
-    const sess = await mongoose.startSession();
-    sess.startTransaction();
-    await createdPatient.save({ session: sess });
-    user.patients.push(createdPatient);
-    await user.save({ session: sess });
-    await sess.commitTransaction();
-  } catch (err) {
-    const error = new HttpError(
-      "Creating patient failed, please try again.",
-      500
-    );
-    return next(error);
-  }
+  const sess = await mongoose.startSession();
+  sess.startTransaction();
+  await createdPatient.save({ session: sess });
+  user.patients.push(createdPatient);
+  await user.save({ session: sess });
+  await sess.commitTransaction();
   return createdPatient;
 };
 
@@ -124,8 +87,7 @@ const updatePatientDb = async (
   treatment,
   medication,
   comments,
-  patient,
-  next
+  patient
 ) => {
   patient.first_name = first_name;
   patient.last_name = last_name;
@@ -140,50 +102,16 @@ const updatePatientDb = async (
   patient.medication = medication;
   patient.comments = comments;
 
-  try {
-    await patient.save();
-  } catch (err) {
-    const error = new HttpError(
-      "Something went wrong, could not update patient.",
-      500
-    );
-    return next(error);
-  }
+  await patient.save();
 };
 
-const updateDoctor = async (new_doctor, patient, next) => {
-  try {
-    const sess = await mongoose.startSession();
-    sess.startTransaction();
-    patient.owner = new_doctor;
-    await patient.save({ session: sess });
-    patient.owner.patients.pull(patient);
-    await patient.owner.save({ session: sess });
-    await sess.commitTransaction();
-  } catch (err) {
-    const error = new HttpError(
-      "Something went wrong, could update doctor.",
-      500
-    );
-    return next(error);
-  }
-};
-
-const deletePatientDb = async (patient, next) => {
-  try {
-    const sess = await mongoose.startSession();
-    sess.startTransaction();
-    await patient.deleteOne({ session: sess });
-    patient.owner.patients.pull(patient);
-    await patient.owner.save({ session: sess });
-    await sess.commitTransaction();
-  } catch (err) {
-    const error = new HttpError(
-      "Something went wrong, could not delete patient.",
-      500
-    );
-    return next(err);
-  }
+const deletePatientDb = async (patient) => {
+  const sess = await mongoose.startSession();
+  sess.startTransaction();
+  await patient.deleteOne({ session: sess });
+  patient.owner.patients.pull(patient);
+  await patient.owner.save({ session: sess });
+  await sess.commitTransaction();
 };
 
 export {
