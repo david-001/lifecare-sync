@@ -4,6 +4,7 @@ import { currentDb } from "./config/db.js";
 import { handleError } from "./lib/http-error.js";
 import fs from "fs";
 import path from "path";
+import cors from "cors";
 import { fileURLToPath } from "url";
 import UsersRoutes from "./routes/users-routes.js";
 import PatientsRoutes from "./routes/patients-routes.js";
