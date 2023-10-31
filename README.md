@@ -2,7 +2,7 @@
 
 ## Requirements
 
-1. This app requires the security services from Pangea. Create an account at [Pangea](https://pangea.cloud/) at enable your API.
+1. This app requires the security services from Pangea. Create an account at [Pangea](https://pangea.cloud/) and enable your API.
 
 2. This app requires MongoDB. Create an account at [MongoDB](https://www.mongodb.com/)
 
