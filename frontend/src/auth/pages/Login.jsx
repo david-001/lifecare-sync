@@ -30,11 +30,12 @@ const Login = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.response.data.message) {
-          handleError(err.response.data.message);
-        } else {
-          handleError(err.response.data);
-        }
+        handleError(err);
+        // if (err.response.data.message) {
+        //   handleError(err.response.data.message);
+        // } else {
+        //   handleError(err.response.data);
+        // }
       });
   };
 

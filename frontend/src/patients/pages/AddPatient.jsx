@@ -31,11 +31,10 @@ const AddPatient = () => {
     axios
       .post(
         `${process.env.REACT_APP_SERVER_URL}api/patients/new`,
-        { role: "patient", ...patient },
+        { ...patient },
         {
           headers: {
-            Authorization: "Bearer " + auth.token,
-            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + auth.token
           },
         }
       )

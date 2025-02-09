@@ -24,6 +24,7 @@ const Patients = () => {
           },
         })
         .then((resp) => {
+          // console.log(resp);
           setPatients(resp.data.patients);
           setFilteredPatients(resp.data.patients);
         })

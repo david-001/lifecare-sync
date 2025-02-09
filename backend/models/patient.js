@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
@@ -15,9 +15,6 @@ const patientSchema = new Schema({
     type: String,
     required: true,
   },
-  image: {
-    type: String,
-  },
   contact: { type: String },
   emergency_contact: { type: String },
   pre_existing_conditions: { type: String },
@@ -26,12 +23,7 @@ const patientSchema = new Schema({
   treatment: { type: String },
   medication: { type: String },
   comments: { type: String },
-  // Doctor
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
+  owner: { type: mongoose.Types.ObjectId, required: true, ref: 'User' }
 });
 
-const Patient = mongoose.model("Patient", patientSchema);
-export { Patient };
+module.exports = mongoose.model('Patient', patientSchema);

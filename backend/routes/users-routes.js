@@ -1,30 +1,31 @@
-import express from "express";
-import UsersController from "../controllers/users-controllers.js";
-import checkAuth from "../middleware/check-auth.js";
-import fileUpload from "../middleware/file-upload.js";
+const express = require('express');
+const { check } = require('express-validator');
 
-export default class UsersRoutes {
-  constructor() {
-    this.usersController = new UsersController();
-    this.router = express.Router();
-    this.router.post(
-      "/register",
-      fileUpload.single("image"),
-      this.usersController.register
-    );
-    this.router.post("/login", this.usersController.login);
-    this.router.post("/logout", checkAuth, this.usersController.logout);
-    this.router.patch(
-      "/updatepassword",
-      checkAuth,
-      this.usersController.updatePassword
-    );
-    this.router.get("/profile", checkAuth, this.usersController.getProfile);
-    this.router.patch(
-      "/updateprofile",
-      checkAuth,
-      fileUpload.single("image"),
-      this.usersController.updateProfile
-    );
-  }
-}
+const usersController = require('../controllers/users-controllers');
+const checkAuth = require('../middleware/check-auth');
+
+const router = express.Router();
+
+router.post(
+  '/register',
+  [
+    check('name')
+      .not()
+      .isEmpty(),
+    check('email')
+      .normalizeEmail()
+      .isEmail(),
+    check('password').isLength({ min: 6 })
+  ],
+  usersController.register
+);
+
+router.post('/login', usersController.login);
+
+router.get('/profile', checkAuth, usersController.getProfile);
+
+router.patch('/updateprofile/:uid', checkAuth, usersController.updateProfile);
+
+router.patch('/updatepassword/:uid', checkAuth, usersController.updatePassword);
+
+module.exports = router;

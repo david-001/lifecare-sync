@@ -11,8 +11,7 @@ const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState({
-    first_name: "",
-    last_name: "",
+    name: "",
     phone: "",
     email: "",
     password: "",
@@ -20,8 +19,7 @@ const Register = () => {
   });
 
   const {
-    first_name,
-    last_name,
+    name,
     phone,
     email,
     password,
@@ -34,12 +32,7 @@ const Register = () => {
     axios
       .post(
         `${process.env.REACT_APP_SERVER_URL}api/users/register`,
-        { role: "doctor", ...inputValue },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { ...inputValue }
       )
       .then(() => {
         handleSuccess("Successfully created account.");
@@ -73,23 +66,13 @@ const Register = () => {
 
       <form onSubmit={handleSubmit}>
         <Input
-          label="first_name"
-          label_txt="First Name"
+          label="name"
+          label_txt="Name"
           type="text"
-          id="first_name"
-          name="first_name"
-          placeholder="First Name"
-          value={first_name}
-          onChange={handleOnChange}
-        />
-        <Input
-          label="last_name"
-          label_txt="Last Name"
-          type="text"
-          id="last_name"
-          name="last_name"
-          placeholder="Last Name"
-          value={last_name}
+          id="name"
+          name="name"
+          placeholder="Name"
+          value={name}
           onChange={handleOnChange}
         />
         <Input

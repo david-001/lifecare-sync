@@ -29,6 +29,7 @@ const PatientDetail = () => {
           },
         })
         .then((resp) => {
+          // console.log(resp);
           setPatient(resp.data.patient);
         })
         .then(() => {
@@ -39,9 +40,8 @@ const PatientDetail = () => {
               },
             })
             .then((resp) => {
-              const first_name = resp.data.profile.first_name;
-              const last_name = resp.data.profile.last_name;
-              setUserName(`${first_name} ${last_name}`);
+              const doctor_name = resp.data.name;
+              setUserName(`${doctor_name}`);
             })
             .catch((err) => {
               handleError(err);
@@ -119,6 +119,9 @@ const PatientDetail = () => {
             ? patient.pre_existing_conditions
             : "No Pre-Existing Conditions"}
         </p>
+        <br />
+        <p className="font-bold">Symptoms</p>
+        <p>{patient.diagnosis ? patient.symptoms : "No symptoms assigned"}</p>
         <br />
         <p className="font-bold">Diagnosis</p>
         <p>{patient.diagnosis ? patient.diagnosis : "No diagnosis assigned"}</p>

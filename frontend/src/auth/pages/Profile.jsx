@@ -26,20 +26,12 @@ const Profile = () => {
           },
         })
         .then((resp) => {
-          const first_name = resp.data.profile.first_name;
-          const last_name = resp.data.profile.last_name;
-          let phone;
-          resp.data.profile.phone
-            ? (phone = resp.data.profile.phone)
-            : (phone = "");
-          const image = resp.data.profile.image;
-          const email = resp.data.email;
+          const name = resp.data.name;
+          // const image = resp.data.profile.image;
+          const phone = resp.data.phone;
           setProfile({
-            first_name,
-            last_name,
+            name,
             phone,
-            image,
-            email,
           });
         })
         .catch((err) => {
@@ -68,7 +60,7 @@ const Profile = () => {
                   ? process.env.REACT_APP_SERVER_URL + profile.image
                   : profile_photo
               }
-              alt={`${profile.first_name} ${profile.last_name}`}
+              alt={`${profile.name}`}
             />
           </div>
 
@@ -76,12 +68,8 @@ const Profile = () => {
             <table>
               <tbody>
                 <tr>
-                  <td className="font-bold">First Name</td>
-                  <td className="py-2 pl-4">{profile.first_name}</td>
-                </tr>
-                <tr>
-                  <td className="font-bold">Last Name</td>
-                  <td className="py-2 pl-4">{profile.last_name}</td>
+                  <td className="font-bold">Name</td>
+                  <td className="py-2 pl-4">{profile.name}</td>
                 </tr>
                 <tr>
                   <td className="font-bold">Phone</td>
@@ -101,14 +89,14 @@ const Profile = () => {
         >
           Update Profile
         </Button>
-        <Button
+        {/* <Button
           variant="danger"
           onClick={() => {
             setUpdatePasswordModal(true);
           }}
         >
           Update Password
-        </Button>
+        </Button> */}
       </div>
       <div>
         <UpdateProfileModal

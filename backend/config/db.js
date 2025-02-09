@@ -1,6 +1,6 @@
 // creating a base name for the mongodb
-const mongooseBaseName = "Lifecare-Sync";
-import dotenv from "dotenv";
+const mongooseBaseName = "Lifecare-Sync-2";
+const dotenv = require('dotenv');
 dotenv.config();
 
 // create the mongodb uri for development and test
@@ -9,4 +9,4 @@ const database = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGOD
 // Use online database or local database
 const currentDb = process.env.MONGODB_URI || database;
 
-export { currentDb };
+exports.currentDb = currentDb

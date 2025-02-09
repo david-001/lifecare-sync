@@ -1,321 +1,223 @@
-import { HttpError } from "../lib/http-error.js";
-import {
-  getPatientsByUserIdDb,
-  getPatientDb,
-  createPatientDb,
-  updatePatientDb,
-  deletePatientDb,
-  getUserFromToken,
-} from "../db/db-operations.js";
-import { validateName } from "../lib/validation.js";
-import { pangeaAudit } from "../lib/pangea.js";
-import fs from "fs";
-import { isValidNumber } from "libphonenumber-js";
+const { validationResult } = require('express-validator');
+const mongoose = require('mongoose');
 
-export default class PatientsController {
-  constructor() {}
+const HttpError = require('../models/http-error');
+const Patient = require('../models/patient');
+const User = require('../models/user');
 
-  // Get a specific patient
-  getPatient = async (req, res, next) => {
-    const patientId = req.params.pid;
-    let patient;
-    let user;
 
-    try {
-      user = await getUserFromToken(req.token);
-      patient = await getPatientDb(patientId);
+const getPatientById = async (req, res, next) => {
+  const patientId = req.params.pid;
 
-      // Audit
-      await pangeaAudit(
-        user.email,
-        "Accessed Patient Records",
-        "Success",
-        `${user.email} accessed ${patient.first_name} ${patient.last_name} records`,
-        req
-      );
-    } catch (err) {
-      return next(err);
-    }
+  let patient;
+  try {
+    patient = await Patient.findById(patientId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not find a patient.',
+      500
+    );
+    return next(error);
+  }
 
-    res.status(201).json({ patient: patient });
-  };
+  if (!patient) {
+    const error = new HttpError(
+      'Could not find patient for the provided id.',
+      404
+    );
+    return next(error);
+  }
 
-  // Get patients for specific user
-  getPatientsByUserId = async (req, res, next) => {
-    // Db operation
-    let user;
-    let user_patients;
+  res.json({ patient: patient });
+};
 
-    try {
-      user = await getUserFromToken(req.token);
-      user_patients = await getPatientsByUserIdDb(user.userId);
 
-      // Audit
-      await pangeaAudit(
-        user.email,
-        "Accessed Patient Records",
-        "Success",
-        `${user.email} accessed ${user.patients.length} patient records`,
-        req
-      );
-    } catch (err) {
-      return next(err);
-    }
+const getPatientsByUserId = async (req, res, next) => {
+  const userId = req.userData.userId;
 
-    res.status(201).json({
-      patients: user_patients.patients.map((patient) => patient.toObject()),
-    });
-  };
+  let userWithPatients;
+  try {
+    userWithPatients = await User.findById(userId).populate('patients');
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching patients failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
 
-  // Create a new patient method
-  createPatient = async (req, res, next) => {
-    const {
-      first_name,
-      last_name,
-      age,
-      contact,
-      emergency_contact,
-      pre_existing_conditions,
-      symptoms,
-      diagnosis,
-      treatment,
-      medication,
-      comments,
-    } = req.body;
 
-    let image;
-    req.file ? (image = req.file.path) : (image = null);
+  if (!userWithPatients) {
+    return next(
+      new HttpError('Could not find patients for the provided user id.', 404)
+    );
+  }
 
-    if (!first_name || !last_name || !age) {
-      return next(
-        new HttpError(
-          "Please ensure that the First Name, Last Name and Age are filled out.",
-          422
-        )
-      );
-    }
+  res.json({
+    patients: userWithPatients.patients.map(patient =>
+      patient.toObject({ getters: true })
+    )
+  });
+};
 
-    // Validation
-    if (!validateName(first_name)) {
-      const error = new HttpError(
-        "Please ensure that the First Name field contains only letters.",
-        422
-      );
-      return next(error);
-    }
-    if (!validateName(last_name)) {
-      const error = new HttpError(
-        "Please ensure that the Last Name field contains only letters.",
-        422
-      );
-      return next(error);
-    }
+const createPatient = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
 
-    if (contact) {
-      if (!isValidNumber(contact)) {
-        const error = new HttpError(
-          "Please ensure that the Contact Tel. is valid. Example +12133734253 or +1 213 373 4253",
-          422
-        );
-        return next(error);
-      }
-    }
+  const { first_name, last_name, age, contact, emergency_contact, pre_existing_conditions, symptoms, diagnosis, treatment, medication, comments } = req.body;
 
-    if (emergency_contact) {
-      if (!isValidNumber(emergency_contact)) {
-        const error = new HttpError(
-          "Please ensure that the Emergency Contact Tel. is valid. Example +12133734253 or +1 213 373 4253",
-          422
-        );
-        return next(error);
-      }
-    }
+  const createdPatient = new Patient({
+    first_name,
+    last_name,
+    age,
+    contact,
+    emergency_contact,
+    pre_existing_conditions,
+    symptoms,
+    diagnosis,
+    treatment,
+    medication,
+    comments,
+    owner: req.userData.userId
+  });
 
-    // Db operations
-    let user;
-    try {
-      user = await getUserFromToken(req.token);
-      await createPatientDb(
-        first_name,
-        last_name,
-        age,
-        image,
-        contact,
-        emergency_contact,
-        pre_existing_conditions,
-        symptoms,
-        diagnosis,
-        treatment,
-        medication,
-        comments,
-        user
-      );
+  let user;
+  try {
+    user = await User.findById(req.userData.userId);
+  } catch (err) {
+    const error = new HttpError(
+      'Creating patient failed, please try again.',
+      500
+    );
+    return next(error);
+  }
 
-      // Audit
-      await pangeaAudit(
-        user.email,
-        `New Patient ${first_name} ${last_name} Created`,
-        "Success",
-        `${user.email} created new patient record.`,
-        req
-      );
-    } catch (err) {
-      return next(err);
-    }
+  if (!user) {
+    const error = new HttpError('Could not find user for provided id.', 404);
+    return next(error);
+  }
 
-    res.status(201).json({ response: "Successfully created patient." });
-  };
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdPatient.save({ session: sess });
+    user.patients.push(createdPatient);
+    await user.save({ session: sess });
+    await sess.commitTransaction();
+  } catch (err) {
+    const error = new HttpError(
+      'Creating patient failed, please try again.',
+      500
+    );
+    return next(error);
+  }
 
-  // Update a patient method
-  updatePatient = async (req, res, next) => {
-    const {
-      first_name,
-      last_name,
-      age,
-      contact,
-      emergency_contact,
-      pre_existing_conditions,
-      symptoms,
-      diagnosis,
-      treatment,
-      medication,
-      comments,
-    } = req.body;
+  res.status(201).json({ patient: createdPatient });
+};
 
-    if (!first_name || !last_name || !age) {
-      return next(
-        new HttpError(
-          "Please ensure that the First Name, Last Name and Age are filled out.",
-          422
-        )
-      );
-    }
+const updatePatient = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
 
-    // Validation
-    if (!validateName(first_name)) {
-      const error = new HttpError(
-        "Please ensure that the First Name field contains only letters.",
-        422
-      );
-      return next(error);
-    }
-    if (!validateName(last_name)) {
-      const error = new HttpError(
-        "Please ensure that the Last Name field contains only letters.",
-        422
-      );
-      return next(error);
-    }
+  const { first_name, last_name, age, contact, emergency_contact, pre_existing_conditions, symptoms, diagnosis, treatment, medication, comments } = req.body;
+  const patientId = req.params.pid;
 
-    if (contact) {
-      if (!isValidNumber(contact)) {
-        const error = new HttpError(
-          "Please ensure that the Contact Tel. is valid. Example +12133734253 or +1 213 373 4253",
-          422
-        );
-        return next(error);
-      }
-    }
+  let patient;
+  try {
+    patient = await Patient.findById(patientId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update patient.',
+      500
+    );
+    return next(error);
+  }
 
-    if (emergency_contact) {
-      if (!isValidNumber(emergency_contact)) {
-        const error = new HttpError(
-          "Please ensure that the Emergency Contact Tel. is valid. Example +12133734253 or +1 213 373 4253",
-          422
-        );
-        return next(error);
-      }
-    }
+  if (patient.owner.toString() !== req.userData.userId) {
+    const error = new HttpError('You are not allowed to edit this patient.', 401);
+    return next(error);
+  }
 
-    const patientId = req.params.pid;
-    let image;
-    req.file ? (image = req.file.path) : (image = null);
+  patient.first_name = first_name;
+  patient.last_name = last_name;
+  patient.age = age;
+  patient.contact = contact;
+  patient.emergency_contact = emergency_contact;
+  patient.pre_existing_conditions = pre_existing_conditions;
+  patient.symptoms = symptoms;
+  patient.diagnosis = diagnosis;
+  patient.treatment = treatment;
+  patient.medication = medication;
+  patient.comments = comments;
 
-    // Db operations
-    let user;
-    let patient;
+  try {
+    await patient.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update patient.',
+      500
+    );
+    return next(error);
+  }
 
-    try {
-      user = await getUserFromToken(req.token);
-      patient = await getPatientDb(patientId);
+  res.status(200).json({ patient: patient.toObject({ getters: true }) });
+};
 
-      // Audit
-      await pangeaAudit(
-        user.email,
-        `Updated Patient record ${first_name} ${last_name}`,
-        "Success",
-        `${user.email} updated patient record.`,
-        req
-      );
-    } catch (err) {
-      return next(err);
-    }
+const deletePatient = async (req, res, next) => {
+  const patientId = req.params.pid;
 
-    // Delete old image
-    if (patient.image && image) {
-      fs.unlink(patient.image, (err) => {
-        console.log(err);
-      });
-    }
+  let patient;
+  try {
+    patient = await Patient.findById(patientId).populate('owner');
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not delete patient.',
+      500
+    );
+    return next(error);
+  }
 
-    if (!image) {
-      image = patient.image;
-    }
+  if (!patient) {
+    const error = new HttpError('Could not find patient for this id.', 404);
+    return next(error);
+  }
 
-    try {
-      await updatePatientDb(
-        first_name,
-        last_name,
-        age,
-        image,
-        contact,
-        emergency_contact,
-        pre_existing_conditions,
-        symptoms,
-        diagnosis,
-        treatment,
-        medication,
-        comments,
-        patient
-      );
-    } catch (err) {
-      return next(err);
-    }
+  if (patient.owner.id !== req.userData.userId) {
+    const error = new HttpError(
+      'You are not allowed to delete this patient.',
+      401
+    );
+    return next(error);
+  }
 
-    res.status(201).json({ response: "Successfully updated patient." });
-  };
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await patient.remove({ session: sess });
+    patient.owner.patients.pull(patient);
+    await patient.owner.save({ session: sess });
+    await sess.commitTransaction();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not delete patient.',
+      500
+    );
+    return next(error);
+  }
 
-  // Delete a patient method
-  deletePatient = async (req, res, next) => {
-    const patientId = req.params.pid;
+  res.status(200).json({ message: 'Deleted patient.' });
+};
 
-    // Db operations
-    let patient;
-    let user;
-
-    try {
-      patient = await getPatientDb(patientId);
-      user = await getUserFromToken(req.token);
-      await deletePatientDb(patient);
-
-      // Audit
-      await pangeaAudit(
-        user.email,
-        `Deleted Patient record ${patient.first_name} ${patient.last_name}`,
-        "Success",
-        `${user.email} deleted new patient record.`,
-        req
-      );
-    } catch (err) {
-      return next(err);
-    }
-
-    if (patient.image) {
-      fs.unlink(patient.image, (err) => {
-        console.log(err);
-      });
-    }
-
-    res.status(200).json({ message: "Deleted patient." });
-  };
-}
+exports.getPatientById = getPatientById;
+exports.getPatientsByUserId = getPatientsByUserId;
+exports.createPatient = createPatient;
+exports.updatePatient = updatePatient;
+exports.deletePatient = deletePatient;

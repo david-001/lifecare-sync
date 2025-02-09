@@ -18,12 +18,11 @@ const DeletePatientModal = (props) => {
     axios
       .delete(process.env.REACT_APP_SERVER_URL + `api/patients/delete/${id}`, {
         headers: {
-          Authorization: "Bearer " + auth.token,
-          "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + auth.token
         },
       })
       .then((resp) => {
-        handleSuccess(resp.data.response);
+        handleSuccess("Successfully deleted patient!");
         navigate("/patients");
         handleClose();
       })

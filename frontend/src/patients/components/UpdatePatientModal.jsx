@@ -17,16 +17,14 @@ const UpdatePatientModal = (props) => {
     axios
       .patch(
         process.env.REACT_APP_SERVER_URL + `api/patients/update/${id}`,
-        { role: "patient", ...patient },
+        { ...patient },
         {
           headers: {
             Authorization: "Bearer " + auth.token,
-            "Content-Type": "multipart/form-data",
           },
-        }
-      )
+        })
       .then((resp) => {
-        handleSuccess(resp.data.response);
+        handleSuccess("Successfully updated patient!");
         handleClose();
       })
       .then(() => triggerRefresh())

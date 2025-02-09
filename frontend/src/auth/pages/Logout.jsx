@@ -10,21 +10,8 @@ const Logout = () => {
   const auth = useContext(AuthContext);
 
   const onLogout = () => {
-    axios
-      .post(
-        `${process.env.REACT_APP_SERVER_URL}api/users/logout`,
-        {},
-        {
-          headers: {
-            Authorization: "Bearer " + auth.token,
-          },
-        }
-      )
-      .then(() => {
-        auth.logout();
-        navigate("/");
-      })
-      .catch((err) => {});
+    auth.logout();
+    navigate("/");
   };
 
   const onCancel = () => {

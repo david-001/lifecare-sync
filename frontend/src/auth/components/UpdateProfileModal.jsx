@@ -10,23 +10,22 @@ const UpdateProfileModal = (props) => {
   const auth = useContext(AuthContext);
 
   const [profile, setProfile] = useState(props.profile);
-  const { first_name, last_name, phone } = profile;
+  const { name, phone } = profile;
 
   const handleSubmitProf = async (e) => {
     e.preventDefault();
     axios
       .patch(
-        `${process.env.REACT_APP_SERVER_URL}api/users/updateprofile`,
-        { role: "doctor", old_image: props.profile.image, ...profile },
+        `${process.env.REACT_APP_SERVER_URL}api/users/updateprofile/${auth.userId}`,
+        { ...profile },
         {
           headers: {
             Authorization: "Bearer " + auth.token,
-            "Content-Type": "multipart/form-data",
           },
         }
       )
       .then((resp) => {
-        handleSuccess(resp.data.response);
+        handleSuccess("Successfully updated profile!");
         handleClose();
       })
       .then(() => triggerRefresh())
@@ -80,23 +79,13 @@ const UpdateProfileModal = (props) => {
 
               <form onSubmit={handleSubmitProf}>
                 <Input
-                  label="first_name"
-                  label_txt="First Name"
+                  label="name"
+                  label_txt="Name"
                   type="text"
-                  id="first_name"
-                  name="first_name"
-                  placeholder="First Name"
-                  value={first_name}
-                  onChange={handleOnProfChange}
-                />
-                <Input
-                  label="last_name"
-                  label_txt="Last Name"
-                  type="text"
-                  id="last_name"
-                  name="last_name"
-                  placeholder="Last Name"
-                  value={last_name}
+                  id="name"
+                  name="name"
+                  placeholder="Name"
+                  value={name}
                   onChange={handleOnProfChange}
                 />
                 <Input
@@ -105,7 +94,7 @@ const UpdateProfileModal = (props) => {
                   type="text"
                   id="phone"
                   name="phone"
-                  placeholder="Phone"
+                  placeholder="[Optional] Phone Number"
                   value={phone}
                   onChange={handleOnProfChange}
                 />

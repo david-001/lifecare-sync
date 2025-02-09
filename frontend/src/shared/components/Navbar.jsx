@@ -18,12 +18,11 @@ const Navbar = () => {
           },
         })
         .then((resp) => {
-          const first_name = resp.data.profile.first_name;
-          const last_name = resp.data.profile.last_name;
+          const name = resp.data.name;
           setUser(
             <>
               <span className="block py-2 pl-3 pr-4 text-white rounded">
-                Welcome, {first_name} {last_name}
+                Welcome, {name}
               </span>
             </>
           );
@@ -135,11 +134,11 @@ const Navbar = () => {
               fillOpacity="1"
               stroke="none"
               strokeWidth="0.0288505"
-              // stroke="currentColor"
-              // strokeLinecap="round"
-              // strokeLinejoin="round"
-              // strokeWidth="2"
-              // d="M1 1h15M1 7h15M1 13h15"
+            // stroke="currentColor"
+            // strokeLinecap="round"
+            // strokeLinejoin="round"
+            // strokeWidth="2"
+            // d="M1 1h15M1 7h15M1 13h15"
             />
           </svg>
           <a

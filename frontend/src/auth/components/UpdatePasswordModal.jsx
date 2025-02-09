@@ -20,7 +20,7 @@ const UpdatePasswordModal = (props) => {
     e.preventDefault();
     axios
       .patch(
-        `${process.env.REACT_APP_SERVER_URL}api/users/updatepassword`,
+        `${process.env.REACT_APP_SERVER_URL}api/users/updatepassword/${auth.userId}`,
         { ...password },
         {
           headers: {
@@ -29,7 +29,7 @@ const UpdatePasswordModal = (props) => {
         }
       )
       .then((resp) => {
-        handleSuccess(resp.data.result);
+        handleSuccess("Successfully updated password!");
         handleClose();
       })
       .then(() => triggerRefresh())
